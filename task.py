@@ -1,20 +1,217 @@
-#task.py
-# test pull request
+#task.py: This file would contain the Task class that represents an individual task. 
+#This class would have all the attributes you've listed (ID, name, description, etc.) 
+#and possibly methods to manipulate these attributes.
+
+
 from datetime import datetime
-from uuid import uuid4
+from enum import Enum
 
+# Define enums for Status and Priority attributes for better data integrity
+class TaskStatus(Enum):
+    START = "Start"
+    IN_PROGRESS = "In Progress"
+    COMPLETE = "Complete"
+
+class TaskPriority(Enum):
+    LOW = "Low"
+    MEDIUM = "Medium"
+    HIGH = "High"
+
+# Define the main Task class
 class Task:
-    def __init__(self, name: str, description: str, category: str = "General"):
-        self.id = str(uuid4())  # Utilisation de l'UUID pour l'ID
-        self.name = name
-        self.description = description
-        self.category = category
-        self.created_at = datetime.now()
-        self.is_done = False
-#gg
-    def mark_done(self):
-        self.is_done = True
+    # The constructor (__init__) method initializes the Task object with required and default attributes
+    def __init__(self, 
+                id, 
+                name, 
+                description, 
+                due_date, 
+                assignee, 
+                status=TaskStatus.IN_PROGRESS, 
+                priority=TaskPriority.MEDIUM, 
+                category=None):        # Initialize attributes
+        
+        self.id = id  # Unique identifier for the task, should be an integer and read-only
+        self.name = name  # Name of the task, should be a non-empty string
+        self.description = description  # Description of the task, can be an empty string
+        self.creation_date = datetime.now()  # Automatically set the creation date to the current date-time
+        self.due_date = due_date  # Due date for the task, should be a future date-time
+        self.assignee = assignee if assignee else []  # List of people assigned to the task
+        self.status = status  # Status of the task, should be one of the defined Enum values
+        self.priority = priority  # Priority of the task, should be one of the defined Enum values
+        self.category = category if category else []  # Category of the task, should be a list
 
-    def __str__(self):
-        status = "Done" if self.is_done else "Not Done"
-        return f"ID: {self.id}, Name: {self.name}, Description: {self.description}, Category: {self.category}, Status: {status}, Created At: {self.created_at}"
+    # Getter and Setter methods for each attribute
+    
+    # ID is read-only, so only a getter method
+    def get_id(self):
+        return self.id
+    
+    # Methods for 'name' attribute
+    def set_name(self, new_name):
+        if new_name:  # Check if the new name is non-empty
+            self.name = new_name
+        else:
+            print("Name cannot be empty or null")
+
+    def get_name(self):
+        return self.name
+
+    # Methods for 'description' attribute
+    def set_description(self, new_description):
+        self.description = new_description  # Description can be empty, so no checks
+
+    def get_description(self):
+        return self.description
+
+    # Methods for 'due_date' attribute
+    def set_due_date(self, new_due_date):
+        if new_due_date > datetime.now():  # Check if the due date is in the future
+            self.due_date = new_due_date
+        else:
+            print("Due date must be in the future")
+
+    def get_due_date(self):
+        return self.due_date
+
+    # Methods for 'assignee' attribute (list)
+    def add_assignee(self, new_assignee):
+        if new_assignee not in self.assignee:  # Check for duplicates
+            self.assignee.append(new_assignee)
+
+    def remove_assignee(self, assignee):
+        if assignee in self.assignee:  # Check if the assignee exists
+            self.assignee.remove(assignee)
+
+    def get_assignees(self):
+        return self.assignee
+
+    # Methods for 'status' attribute (Enum)
+    def set_status(self, new_status):
+        if new_status in TaskStatus:  # Check if the status is valid according to Enum
+            self.status = new_status
+        else:
+            print("Invalid status")
+
+    def get_status(self):
+        return self.status
+
+    # Methods for 'priority' attribute (Enum)
+    def set_priority(self, new_priority):
+        if new_priority in TaskPriority:  # Check if the priority is valid according to Enum
+            self.priority = new_priority
+        else:
+            print("Invalid priority")
+
+    def get_priority(self):
+        return self.priority
+
+    # Methods for 'category' attribute (list)
+    def add_category(self, new_category):
+        if new_category not in self.category:  # Check for duplicates
+            self.category.append(new_category)
+
+    def remove_category(self, category):
+        if category in self.category:  # Check if the category exists
+            self.category.remove(category)
+
+    def get_categories(self):
+        return self.category
+
+# Your methods for manipulating attributes can be added here later.
+
+
+    # Additional methods to manipulate attributes can go here.
+
+        #self.id = id
+        # id will be an integer 
+        # id will be a unique identifier for each task 
+        # id will be automatically generated by the system
+        # id cannot be modified by the user
+        # id cannot be empty
+        # id cannot be null
+        # id cannot be negative
+        # id cannot be zero
+        # id will be an integer
+
+
+        #self.name = name
+        # name will be necessary a string
+        # name will be the name of the task
+        # name cannot be empty
+        # name cannot be null
+        # name can be modified by the user
+
+        #self.description = description
+        # description will be necessary a string
+        # description will be the description of the task
+        # description can be empty
+        # description can be null
+        # description can be modified by the user
+
+        #self.creation_date = datetime.now()
+        # creation date will be with the format dd/mm/yyyy. 
+        # creation date will be a datetime object
+        # Creation date proposed will be the current date when the time is created. 
+        # Creation date cannot be from the past
+        # Creation date can be in the future
+        # Creation date can be modified by the user. 
+        #self.due_date = due_date
+        # due date will be with the format dd/mm/yyyy. 
+        # due date will be a datetime object
+        # due date will be the date when the task is due.
+        # due date cannot be from the past
+        # due date can be in the future
+        # due date can be modified by the user
+
+        #self.assignee = assignee
+        # assignee will be a a list of string  ?
+        # assignee will be the person who is assigned to the task
+        # assignee cannot be empty
+        # assignee cannot be null
+        # assignee can be modified by the user
+        # assignee can be several people
+        # assignee 1st proposed will be the user who created the task
+        # assignee 2nd proposed will be the user who is logged in
+
+        #self.status = status
+        # status will be an Enum
+        # status will be the status of the task
+        # status cannot be empty
+        # status cannot be null
+        # status can be modified by the user
+        # status cannot be several status
+        # status 1st proposed will be Start
+        # status 2nd proposed will be Complete
+        # status 3rd proposed will be In Progress
+        # only one status can be selected
+        # only 3 status choice will be proposed to the user
+
+        #self.priority = priority
+        # priority will be an Enum
+        # priority will be the priority of the task
+        # priority cannot be empty
+        # priority cannot be null
+        # priority can be modified by the user
+        # priority cannot be several priority
+        # priority 1st proposed will be Low
+        # priority 2nd proposed will be Medium
+        # priority 3rd proposed will be High
+        # only one priority can be selected
+        # only 3 priority choice will be proposed to the user
+
+        #self.category = category
+        # category will be a list of string
+        # category will be the category of the task
+        # category can be empty
+        # category can be null
+        # category can be modified by the user
+        # category can be several category
+        # category 1st proposed will be General
+        # category 2nd proposed will be Work
+        # category 3rd proposed will be Personal
+        # category 4th proposed will be Shopping
+        # category 5th proposed will be Others
+        # only 5 category choice will be proposed to the user
+
+
+
