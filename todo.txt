@@ -1,0 +1,43 @@
+code (exceptions): Maxime
+logger: Jaime
+test (unitaires, coverage): Edouard
+securité: Florent
+documentation (Sphinx): 
+CI/CD (PyPi): Pierre
+
+● Interface en Ligne de Commande (CLI) : 
+● Intégration d'une interface utilisateur graphique (GUI) (Streamlits): Pierre
+● Intégration de la gestion des dépendances avec Docker : 
+● Intégration de l'authentification utilisateur : Maxime
+● Intégration de la recherche avancée :
+● Utilisation d'une base de données : Jaime
+● Optimisation des performances : 
+
+Objet tache: 
+
+ID int
+nom str
+description str
+date de création date
+date de écheance date
+assignation str
+état (terminée ou non, a minima) str
+Priorité str
+catégorie (bonus) str
+
+task1 = Task(date, nom, desc)
+task2 = Task(date, nom, desc)
+
+Functionalités Liste:
+Ajouter tache list
+Supprimer tache
+display_tasks - afficher task
+complete_task
+modifier tache
+reinitialiter
+envoyer notification (mail)
+
+
+liste = TaskList()
+liste.add_task(task1)
+liste.add([task1, task2])
