@@ -2,11 +2,10 @@
 #This class would have all the attributes you've listed (ID, name, description, etc.) 
 #and possibly methods to manipulate these attributes.
 
-
 from datetime import datetime
 from enum import Enum
 
-# Define enums for Status and Priority attributes for better data integrity
+# Création d'énumérations pour le statut et la priorité des tâches
 class TaskStatus(Enum):
     START = "Start"
     IN_PROGRESS = "In Progress"
@@ -17,105 +16,108 @@ class TaskPriority(Enum):
     MEDIUM = "Medium"
     HIGH = "High"
 
-# Define the main Task class
+# Classe Task principale qui définit un objet de tâche
 class Task:
-    # The constructor (__init__) method initializes the Task object with required and default attributes
-    def __init__(self, 
-                id, 
-                name, 
-                description, 
-                due_date, 
-                assignee, 
-                status=TaskStatus.IN_PROGRESS, 
-                priority=TaskPriority.MEDIUM, 
-                category=None):        # Initialize attributes
-        
-        self.id = id  # Unique identifier for the task, should be an integer and read-only
-        self.name = name  # Name of the task, should be a non-empty string
-        self.description = description  # Description of the task, can be an empty string
-        self.creation_date = datetime.now()  # Automatically set the creation date to the current date-time
-        self.due_date = due_date  # Due date for the task, should be a future date-time
-        self.assignee = assignee if assignee else []  # List of people assigned to the task
-        self.status = status  # Status of the task, should be one of the defined Enum values
-        self.priority = priority  # Priority of the task, should be one of the defined Enum values
-        self.category = category if category else []  # Category of the task, should be a list
 
-    # Getter and Setter methods for each attribute
-    
-    # ID is read-only, so only a getter method
+    _next_id = 1  # Attribut au niveau de la classe pour générer des ID uniques
+
+    def __init__(self, name, description, due_date, assignee, status=TaskStatus.IN_PROGRESS, priority=TaskPriority.MEDIUM, category=None):
+        
+        self.id = Task._next_id  # ID unique généré automatiquement
+        Task._next_id += 1  # Incrémentation de l'ID pour la prochaine tâche
+        
+        self.set_name(name)
+        self.set_description(description)
+        self.creation_date = datetime.now()
+        self.set_due_date(due_date)
+        self.set_assignee(assignee)
+        self.set_status(status)
+        self.set_priority(priority)
+        self.set_category(category if category else [])  # Liste vide si aucune catégorie n'est fournie
+
+    # Les méthodes get_ et set_ sont utilisées pour accéder et modifier les attributs
+    # Par exemple :
     def get_id(self):
         return self.id
-    
-    # Methods for 'name' attribute
+
     def set_name(self, new_name):
-        if new_name:  # Check if the new name is non-empty
+        if isinstance(new_name, str) and new_name:  
             self.name = new_name
         else:
-            print("Name cannot be empty or null")
+            raise ValueError("Name must be a non-empty string")
 
     def get_name(self):
         return self.name
 
-    # Methods for 'description' attribute
-    def set_description(self, new_description):
-        self.description = new_description  # Description can be empty, so no checks
+    # ... Vous pouvez continuer avec les autres méthodes get_ et set_ comme dans votre code original
 
+
+    # Method to set the 'description' attribute after validation
+    def set_description(self, new_description):
+        if isinstance(new_description, str):  # Description should be a string (can be empty)
+            self.description = new_description
+        else:
+            raise ValueError("Description must be a string")
+
+    # Method to retrieve the 'description'
     def get_description(self):
         return self.description
 
-    # Methods for 'due_date' attribute
+    # Method to set the 'due_date' attribute after validation
     def set_due_date(self, new_due_date):
-        if new_due_date > datetime.now():  # Check if the due date is in the future
+        if isinstance(new_due_date, datetime) and new_due_date > datetime.now():  # Must be a future date-time
             self.due_date = new_due_date
         else:
-            print("Due date must be in the future")
+            raise ValueError("Due date must be a future datetime object")
 
+    # Method to retrieve the 'due_date'
     def get_due_date(self):
         return self.due_date
 
-    # Methods for 'assignee' attribute (list)
-    def add_assignee(self, new_assignee):
-        if new_assignee not in self.assignee:  # Check for duplicates
-            self.assignee.append(new_assignee)
+    # Method to set the 'assignee' attribute after validation
+    def set_assignee(self, new_assignee):
+        if isinstance(new_assignee, list) and all(isinstance(i, str) for i in new_assignee):  # Must be a list of string names
+            self.assignee = new_assignee
+        else:
+            raise ValueError("Assignee must be a list of strings")
 
-    def remove_assignee(self, assignee):
-        if assignee in self.assignee:  # Check if the assignee exists
-            self.assignee.remove(assignee)
-
+    # Method to retrieve the list of 'assignees'
     def get_assignees(self):
         return self.assignee
 
-    # Methods for 'status' attribute (Enum)
+    # Method to set the 'status' attribute after validation
     def set_status(self, new_status):
-        if new_status in TaskStatus:  # Check if the status is valid according to Enum
+        if new_status in TaskStatus:  # Status must be one of the defined Enum values
             self.status = new_status
         else:
-            print("Invalid status")
+            raise ValueError("Invalid status")
 
+    # Method to retrieve the 'status'
     def get_status(self):
         return self.status
 
-    # Methods for 'priority' attribute (Enum)
+    # Method to set the 'priority' attribute after validation
     def set_priority(self, new_priority):
-        if new_priority in TaskPriority:  # Check if the priority is valid according to Enum
+        if new_priority in TaskPriority:  # Priority must be one of the defined Enum values
             self.priority = new_priority
         else:
-            print("Invalid priority")
+            raise ValueError("Invalid priority")
 
+    # Method to retrieve the 'priority'
     def get_priority(self):
         return self.priority
 
-    # Methods for 'category' attribute (list)
-    def add_category(self, new_category):
-        if new_category not in self.category:  # Check for duplicates
-            self.category.append(new_category)
+    # Method to set the 'category' attribute after validation
+    def set_category(self, new_category):
+        if isinstance(new_category, list) and all(isinstance(i, str) for i in new_category):  # Must be a list of string names
+            self.category = new_category
+        else:
+            raise ValueError("Category must be a list of strings")
 
-    def remove_category(self, category):
-        if category in self.category:  # Check if the category exists
-            self.category.remove(category)
-
+    # Method to retrieve the 'category'
     def get_categories(self):
         return self.category
+
 
 # Your methods for manipulating attributes can be added here later.
 
