@@ -1,6 +1,22 @@
+from datetime import datetime
+import logging
+import os
+
 from task_manager import TaskManager
 from task import Task, TaskStatus, TaskPriority
-from datetime import datetime
+
+path = os.path.dirname(os.path.abspath(__file__))
+log_file_all = os.path.join(path, 'logs', "user_input.log")
+logger = logging.getLogger("user_input")
+if not len(logger.handlers):
+    logger.setLevel(logging.INFO)
+    
+    # Define a formatter and a file handler for logging
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    file_handler = logging.FileHandler(log_file_all)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
 
 # Function to display menu options
 def display_menu():
@@ -18,19 +34,25 @@ def display_menu():
 # Function to add a task
 def add_task(task_manager):
     name = input("Enter task name: ")
+    logger.info(f"name input: {name}")
     description = input("Enter task description: ")
+    logger.info(f"description input: {description}")
     due_date_str = input("Enter due date (YYYY-MM-DD HH:MM:SS): ")
+    logger.info(f"due_date input: {due_date_str}")
 
     try:
         due_date = datetime.strptime(due_date_str, '%Y-%m-%d %H:%M:%S')
         if due_date <= datetime.now():
             print("Due date must be in the future.")
+            logger.error(f"Input due date is before present time.")
             return
     except ValueError:
         print("Invalid date format.")
+        logger.error(f"Input due date has no valid format")
         return
 
     assignees = input("Enter assignees (comma separated): ").split(",")
+    logger.info(f"assignees input: {assignees}")
     task_manager.add_task(name, description, due_date, assignees)
     print(f"Task '{name}' added successfully.")
 
@@ -38,6 +60,7 @@ def add_task(task_manager):
 def remove_task(task_manager):
     try:
         task_id = int(input("Enter the task ID to remove: "))
+        logger.info(f"task_id input to be removed: {task_id}")
         result = task_manager.delete_task(task_id)
         if result is None:
             print(f"Task with ID {task_id} removed.")
@@ -45,6 +68,7 @@ def remove_task(task_manager):
             print(result)
     except ValueError:
         print("Please enter a valid integer for task ID.")
+        logger.error(f"Input ID is not a valid integer")
 
 # Function to display all tasks
 def display_all_tasks(task_manager):
@@ -57,6 +81,7 @@ def display_all_tasks(task_manager):
 def complete_task(task_manager):
     try:
         task_id = int(input("Enter the task ID to mark as completed: "))
+        logger.info(f"task_id input to be completed: {task_id}")
         result = task_manager.complete_task(task_id)
         if result is None:
             print(f"Task with ID {task_id} marked as complete.")
@@ -64,11 +89,12 @@ def complete_task(task_manager):
             print(result)
     except ValueError:
         print("Please enter a valid integer for task ID.")
+        logger.error(f"Input ID is not a valid integer")
 
 # Main function
 def main():
     task_manager = TaskManager()  # Initialize an instance of TaskManager
-
+    
     while True:  # Main loop for the program
         print("\n--- Task Manager ---")
         print("Choose an option:")
