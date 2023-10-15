@@ -6,11 +6,18 @@ from task import Task, TaskStatus, TaskPriority
 from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
+import db
 
 class TaskManager:
 
+    # _next_id = 1 
+
     def __init__(self):
+        # self.id = Task._next_id  
+        # Task._next_id += 1  
+
         self.tasks = {}  # Initializing an empty dictionary to store Task objects
+        self.data_base = db.SQLiteDB('task_manager.db', 'data_base.log')
 
     # Add a new task by creating a Task object
     def add_task(self, name: str, description: str, due_date: datetime, assignee: List[str], 
@@ -24,6 +31,9 @@ class TaskManager:
         
         new_task = Task(name, description, due_date, assignee, status, priority, category)
         self.tasks[new_task.get_id()] = new_task
+
+        self.data_base.insert_data('tasks', new_task)
+
         return None
 
     # Add an existing task to the tasks dictionary
@@ -40,6 +50,8 @@ class TaskManager:
         if task_id not in self.tasks:
             return "Task ID not found"
         del self.tasks[task_id]
+
+        self.data_base.remove_task(task_id)
         return None
 
     # Display all tasks
@@ -52,6 +64,7 @@ class TaskManager:
         if task_id not in self.tasks:
             return "Task ID not found"
         self.tasks[task_id].set_status(TaskStatus.COMPLETE)
+        self.data_base.fetch_data(task_id)
         return None
 
     # Modify task attributes
@@ -89,6 +102,6 @@ class TaskManager:
         return None
 
     # Get all tasks
-    def get_all_tasks(self) -> list:
-        return list(self.tasks.values())
+    def get_all_tasks(self) -> dict:
+        return self.tasks
 
