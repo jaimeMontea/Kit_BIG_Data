@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main  # Vous pouvez spécifier la branche que vous souhaitez surveiller ici
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Choisissez l'environnement d'exécution approprié
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # Action pour récupérer le code depuis le dépôt GitHub
+
+    - name: Set up Python
+      uses: actions/setup-python@v2  # Action pour configurer Python
+      with:
+        python-version: 3.x  # Spécifiez la version de Python que vous utilisez
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt  # Installez les dépendances de votre projet
+
+    - name: Run tests
+      run: pytest  # Exécutez vos tests unitaires avec pytest
