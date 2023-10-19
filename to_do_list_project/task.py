@@ -34,9 +34,12 @@ class Task:
     Represents a Task object with attributes such as ID, name, description, etc.
     """
     def __init__(self, name: str, description: str, due_date: datetime, assignee: list[str], 
-                 status: TaskStatus = TaskStatus.IN_PROGRESS, 
-                 priority: TaskPriority = TaskPriority.MEDIUM, 
-                 categories: list[str] = []) -> None:
+                status: TaskStatus = TaskStatus.IN_PROGRESS, 
+                priority: TaskPriority = TaskPriority.MEDIUM, 
+                categories: list[str] = None) -> None:
+        if categories is None:
+            categories = []
+            
         self.name = name
         self.description = description
         self.creation_date = datetime.now()
