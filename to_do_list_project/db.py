@@ -1,19 +1,20 @@
 import logging
 import os
 import sqlite3
-from typing import Type, bool
+from typing import Type
 
 import task
 
 
 class SQLiteDB():
 
-    def __init__(self, db_name: str, log_file: str) -> None:
-        path = os.path.dirname(os.path.abspath(__file__))
+    def __init__(self, db_name: str) -> None:
+        current_dir = os.path.dirname(__file__)
+        parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
-        self.db_name = os.path.join(path, db_name)
+        self.db_name = os.path.join(parent_dir, db_name)
         self.conn = None 
-        self.logger = self.setup_logger(os.path.join(path, 'logs', log_file))
+        self.logger = self.setup_logger(os.path.join(parent_dir, 'logs', 'data_base.log'))
 
     def setup_logger(self, log_file: str) -> Type[logging.Logger]: 
         logger = logging.getLogger("task_manager_database")
@@ -72,7 +73,6 @@ class SQLiteDB():
             self.connect()
             cursor = self.conn.cursor()
             insert_sql = self.generate_sql_insert_statement(table_name)
-            id = str(data.id) 
             name = data.name
             description = data.description
             creation_date = data.creation_date.strftime("%Y/%m/%d %H:%M:%S")
@@ -80,9 +80,9 @@ class SQLiteDB():
             assignee = ', '.join(data.assignee)
             status = data.status.value
             priority = data.priority.value
-            category = '' if not data.category else ''.join(data.category)
+            category = '' if not data.categories else ' '.join(data.categories)
 
-            cursor.execute(insert_sql, (id, name, description, creation_date, due_date, assignee, status, priority, category))
+            cursor.execute(insert_sql, (name, description, creation_date, due_date, assignee, status, priority, category))
             self.conn.commit()
             self.logger.info("Data inserted successfully")
         except sqlite3.Error as e:
@@ -127,7 +127,7 @@ class SQLiteDB():
         if table_name == 'tasks':
             create_table_sql = '''
                                     CREATE TABLE tasks (
-                                        id INTEGER,
+                                        id PRIMARY KEY INTEGER,
                                         name TEXT,
                                         description TEXT,
                                         creation_date DATETIME,
@@ -151,8 +151,8 @@ class SQLiteDB():
         if table_name == 'tasks':
             insert_sql = '''
                         INSERT INTO tasks
-                        (id, name, description, creation_date, due_date, assignee, status, priority, category)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        (name, description, creation_date, due_date, assignee, status, priority, category)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             '''
         return insert_sql
 
