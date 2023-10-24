@@ -59,7 +59,7 @@ Après avoir configuré l'environnement :
    cd Kit_BIG_Data
 
 2. **Lancez le projet**:
-   python main.py
+   python .\to_do_list_project\main.py
 
 ### Normes de codage
 
