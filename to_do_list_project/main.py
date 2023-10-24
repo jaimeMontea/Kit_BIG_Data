@@ -5,8 +5,9 @@ import os
 from task_manager import TaskManager
 from task import Task, TaskStatus, TaskPriority
 
-path = os.path.dirname(os.path.abspath(__file__))
-log_file_all = os.path.join(path, 'logs', "user_input.log")
+current_dir = os.path.dirname(__file__)
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+log_file_all = os.path.join(parent_dir, 'logs', "user_input.log")
 logger = logging.getLogger("user_input")
 if not len(logger.handlers):
     logger.setLevel(logging.INFO)
