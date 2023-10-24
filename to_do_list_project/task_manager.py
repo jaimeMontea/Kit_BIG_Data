@@ -1,107 +1,73 @@
-#task_manager.py: This file would contain the TaskManager class, which manages a collection of tasks. 
-#This class could have methods to add a task, delete a task, mark it as complete, etc.
-
-from typing import List, Union
-from task import Task, TaskStatus, TaskPriority
 from datetime import datetime
-import smtplib
-from email.mime.text import MIMEText
-import db
+from typing import List, Union
+from db import SQLiteDB
+from task import Task, TaskStatus, TaskPriority
+
 
 class TaskManager:
+    """A manager for tasks that provides functionalities to interact with a persistent SQLite database."""
 
-    # _next_id = 1 
+    def __init__(self, db_name: str):
+        """
+        Create a TaskManager instance connected to an SQLite database.
 
-    def __init__(self):
-        # self.id = Task._next_id  
-        # Task._next_id += 1  
+        Args:
+            db_name: Name of the SQLite database file.
+        """
+        self._db = SQLiteDB(db_name)
+        self._tasks = {}  # Stores tasks in-memory, indexed by task IDs for quick retrieval
 
-        self.tasks = {}  # Initializing an empty dictionary to store Task objects
-        self.data_base = db.SQLiteDB('task_manager.db')
+    def add_task(self, name: str, description: str, due_date: datetime, assignees: List[str], 
+                 status: TaskStatus = TaskStatus.IN_PROGRESS, priority: TaskPriority = TaskPriority.MEDIUM, 
+                 categories: List[str] = None) -> Union[None, str]:
+        """
+        Add a new task to the manager.
 
-    # Add a new task by creating a Task object
-    def add_task(self, name: str, description: str, due_date: datetime, assignee: List[str], 
-                 status: TaskStatus = TaskStatus.IN_PROGRESS, 
-                 priority: TaskPriority = TaskPriority.MEDIUM, 
-                 category: List[str] = None) -> Union[None, str]:
-        
-        # Add the due_date validation here
-        if due_date <= datetime.now():
-            return "Due date must be in the future."
-        
-        new_task = Task(name, description, due_date, assignee, status, priority, category)
-        # self.tasks[new_task.get_id()] = new_task -> TODO: modify with the rest of methods
+        Args:
+            name: Name of the task.
+            description: Detailed description of the task.
+            due_date: The date by which the task should be completed.
+            assignees: Names of people responsible for the task.
+            status: The current status of the task. Defaults to IN_PROGRESS.
+            priority: The importance level of the task. Defaults to MEDIUM.
+            categories: Categories/tags associated with the task. Defaults to None.
 
-        self.data_base.insert_data('tasks', new_task)
+        Returns:
+            None if the task is successfully added, or an error message otherwise.
+        """
+        task = Task(name, description, due_date, assignees, status, priority, categories)
+        task_id = self._db.insert_data('tasks', task)
+        if task_id:
+            self._tasks[task_id] = task
+        else:
+            return "Failed to add the task to the database."
 
-        return None
+    def get_task(self, task_id: int) -> Union[Task, None]:
+        """Retrieve a task by its ID."""
+        return self._tasks.get(task_id)
 
-    # Add an existing task to the tasks dictionary
-    def add_existing_task(self, task: Task) -> Union[None, str]:
-        if not isinstance(task, Task):
-            return "Only Task objects can be added"
-        if task.get_id() in self.tasks:
-            return "Task with the same ID already exists"
-        self.tasks[task.get_id()] = task
-        return None
-
-    # Delete a task based on its ID
-    def delete_task(self, task_id: int) -> Union[None, str]:
-        if task_id not in self.tasks:
-            return "Task ID not found"
-        del self.tasks[task_id]
-
-        self.data_base.remove_task(task_id)
-        return None
-
-    # Display all tasks
-    def display_tasks(self) -> None:
-        for task_id, task_obj in self.tasks.items():
-            print(f"ID: {task_id}, Name: {task_obj.get_name()}, Status: {task_obj.get_status().value}")
-
-    # Mark a task as complete
     def complete_task(self, task_id: int) -> Union[None, str]:
-        if task_id not in self.tasks:
-            return "Task ID not found"
-        self.tasks[task_id].set_status(TaskStatus.COMPLETE)
-        self.data_base.fetch_data(task_id)
-        return None
+        """Mark a task as complete."""
+        task = self._tasks.get(task_id)
+        if task:
+            task.status = TaskStatus.COMPLETE
+            if not self._db.update_task_status(task_id, TaskStatus.COMPLETE):
+                return "Failed to update the task status in the database."
+        else:
+            return "Task not found."
 
-    # Modify task attributes
-    def modify_task(self, task_id: int, name=None, description=None, due_date=None) -> Union[None, str]:
-        if task_id not in self.tasks:
-            return "Task ID not found"
-        task = self.tasks[task_id]
-        if name:
-            task.set_name(name)
-        if description:
-            task.set_description(description)
-        if due_date:
-            task.set_due_date(due_date)
-        return None
+    def remove_task(self, task_id: int) -> Union[None, str]:
+        """Remove a task by its ID."""
+        if task_id in self._tasks:
+            del self._tasks[task_id]
+            self._db.remove_task(task_id)
+        else:
+            return "Task not found."
 
-    # Clear all tasks
-    def reset_tasks(self) -> None:
-        self.tasks.clear()
+    def list_all_tasks(self) -> List[Task]:
+        """List all managed tasks."""
+        return list(self._tasks.values())
 
-    # Send notification email for a task
-    def send_notification(self, task_id: int, email_address: str) -> Union[None, str]:
-        if task_id not in self.tasks:
-            return "Task ID not found"
-        task = self.tasks[task_id]
-        subject = f"Notification for Task: {task.get_name()}"
-        body = f"Task {task.get_name()} is due on {task.get_due_date()}"
-        msg = MIMEText(body)
-        msg["Subject"] = subject
-        msg["From"] = "your_email@example.com"
-        msg["To"] = email_address
-
-        with smtplib.SMTP("smtp.example.com", 587) as server:
-            server.login("your_email@example.com", "your_password")
-            server.send_message(msg)
-        return None
-
-    # Get all tasks
-    def get_all_tasks(self) -> dict:
-        return self.tasks
-
+    def list_incomplete_tasks(self) -> List[Task]:
+        """List tasks that are not marked as complete."""
+        return [task for task in self._tasks.values() if task.status != TaskStatus.COMPLETE]
