@@ -1,6 +1,6 @@
 name: Linting with flake8
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   flake8-lint:

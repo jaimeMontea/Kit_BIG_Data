@@ -1,6 +1,6 @@
 name: Pydocstyle Check
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   style-check:
