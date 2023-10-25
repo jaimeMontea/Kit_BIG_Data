@@ -1,107 +1,163 @@
-#task_manager.py: This file would contain the TaskManager class, which manages a collection of tasks. 
-#This class could have methods to add a task, delete a task, mark it as complete, etc.
-
-from typing import List, Union
-from task import Task, TaskStatus, TaskPriority
 from datetime import datetime
-import smtplib
-from email.mime.text import MIMEText
-import db
+from typing import List
+from to_do_list_project.db import SQLiteDB
+from to_do_list_project.task import Task, TaskStatus, TaskPriority
+
+class DatabaseConnectionError(Exception):
+    """Exception raised when the database connection fails."""
+    pass
+
+class TaskNotFoundError(Exception):
+    """Exception raised when a task is not found in the manager."""
+    pass
 
 class TaskManager:
 
-    # _next_id = 1 
+    def __init__(self, db_name: str):
+        """
+        Initialize the TaskManager object.
+        Args:
+            db_name (str): Name of the database.
+        
+        Raises:
+            DatabaseConnectionError: If the database connection fails.
+        """
+        try:
+            self._db = SQLiteDB(db_name)
+        except Exception as e:
+            raise DatabaseConnectionError("Failed to connect to the database.") from e
+        self._tasks = {}
+        self.load_tasks_from_db()
 
-    def __init__(self):
-        # self.id = Task._next_id  
-        # Task._next_id += 1  
+    def load_tasks_from_db(self):
+        """
+        Load tasks from the database into the _tasks dictionary.
+        """
+        try:
+            print("Trying to connect to DB...")  # Debug line
+            self._db.connect()
+            print("Connected to DB.")  # Debug line
 
-        self.tasks = {}  # Initializing an empty dictionary to store Task objects
-        self.data_base = db.SQLiteDB()
+            cursor = self._db.conn.cursor()
+            print("Cursor created.")  # Debug line
 
-    # Add a new task by creating a Task object
+            cursor.execute("SELECT * FROM tasks")
+            print("SQL query executed.")  # Debug line
+
+            rows = cursor.fetchall()
+            print(f"Fetched rows: {rows}")  # Debug line
+
+            self._db.close_connection()
+            print("DB connection closed.")  # Debug line
+
+            for row in rows:
+                task_id, name, description, creation_date, due_date, assignee, status, priority, categories = row
+                print(f"task_id: {task_id}, name: {name}, description: {description}, creation_date: {creation_date}, due_date: {due_date}, assignee: {assignee}, status: {status}, priority: {priority}, categories: {categories}")
+
+                # Create Task object
+                task = Task(name, description, datetime.strptime(due_date, '%Y-%m-%d %H:%M:%S'), 
+                            assignee.split(','), TaskStatus[status], TaskPriority[priority], categories.split(','))
+
+                self._tasks[task_id] = task
+                print(f"Task added to _tasks: {task_id}")  # Debug line
+
+            print(f"Tasks after loading from DB: {self._tasks}")  # Debug line
+
+        except Exception as e:
+            print(f"Exception occurred: {e}")  # Debug line
+
+
+
     def add_task(self, name: str, description: str, due_date: datetime, assignee: List[str], 
                  status: TaskStatus = TaskStatus.IN_PROGRESS, 
                  priority: TaskPriority = TaskPriority.MEDIUM, 
-                 category: List[str] = None) -> Union[None, str]:
+                 categories: List[str] = None) -> int:
+        """
+        Add a new task to the manager.
+        Returns:
+            int: The ID of the newly created task.
+        """
+        task = Task(name, description, due_date, assignee, status, priority, categories)
+        task_id = self._db.insert_data('tasks', task)
+        self._tasks[task_id] = task
         
-        # Add the due_date validation here
-        if due_date <= datetime.now():
-            return "Due date must be in the future."
+        print("Tasks after adding a new task:", self._tasks) # Debug line
+        return task_id
+
+    def remove_task(self, task_id: int):
+        print(f"Tasks before attempting removal: {self._tasks}")
+
+        # Remove the task from the database
+        self._db.remove_task(task_id)
+
+        # Remove the task from the _tasks dictionary if it exists
+        if task_id in self._tasks:
+            del self._tasks[task_id]
+
+        print(f"Tasks after removal: {self._tasks}")
+        return None
+
+    def list_all_tasks(self) -> List[Task]:
+        """
+        List all tasks managed by the TaskManager.
+        Returns:
+            List[Task]: List of all tasks.
+        """
+        return list(self._tasks.values())
+
+    def get_task_by_id(self, task_id: int) -> Task:
+        """
+        Get a task by its ID.
+        Returns:
+            Task: The task object.
+        Raises:
+            TaskNotFoundError: If the task is not found.
+        """
+        task = self._tasks.get(task_id)
+        if not task:
+            raise TaskNotFoundError("Task not found.")
+        return task
+
+    def modify_task(self, task_id: int, 
+                    new_name: str = None, 
+                    new_description: str = None, 
+                    new_due_date: datetime = None,
+                    new_assignee: List[str] = None,
+                    new_status: TaskStatus = None,
+                    new_priority: TaskPriority = None,
+                    new_categories: List[str] = None):
+        """
+        Modify an existing task's attributes.
+        Args:
+            task_id (int): The ID of the task to modify.
+            new_name (str, optional): New name for the task.
+            new_description (str, optional): New description for the task.
+            new_due_date (datetime, optional): New due date for the task.
+            new_assignee (List[str], optional): New assignees for the task.
+            new_status (TaskStatus, optional): New status for the task.
+            new_priority (TaskPriority, optional): New priority for the task.
+            new_categories (List[str], optional): New categories for the task.
+        Raises:
+            TaskNotFoundError: If the task is not found.
+        """
+        task = self._tasks.get(task_id)
+        if not task:
+            raise TaskNotFoundError("Task not found.")
         
-        new_task = Task(name, description, due_date, assignee, status, priority, category)
-        # self.tasks[new_task.get_id()] = new_task -> TODO: modify with the rest of methods
+        if new_name:
+            task.name = new_name
+        if new_description:
+            task.description = new_description
+        if new_due_date:
+            task.due_date = new_due_date
+        if new_assignee:
+            task.assignee = new_assignee
+        if new_status:
+            task.status = new_status
+        if new_priority:
+            task.priority = new_priority
+        if new_categories:
+            task.categories = new_categories
 
-        self.data_base.insert_data('tasks', new_task)
-
-        return None
-
-    # Add an existing task to the tasks dictionary
-    def add_existing_task(self, task: Task) -> Union[None, str]:
-        if not isinstance(task, Task):
-            return "Only Task objects can be added"
-        if task.get_id() in self.tasks:
-            return "Task with the same ID already exists"
-        self.tasks[task.get_id()] = task
-        return None
-
-    # Delete a task based on its ID
-    def delete_task(self, task_id: int) -> Union[None, str]:
-        if task_id not in self.tasks:
-            return "Task ID not found"
-        del self.tasks[task_id]
-
-        self.data_base.remove_task(task_id)
-        return None
-
-    # Display all tasks
-    def display_tasks(self) -> None:
-        for task_id, task_obj in self.tasks.items():
-            print(f"ID: {task_id}, Name: {task_obj.get_name()}, Status: {task_obj.get_status().value}")
-
-    # Mark a task as complete
-    def complete_task(self, task_id: int) -> Union[None, str]:
-        if task_id not in self.tasks:
-            return "Task ID not found"
-        self.tasks[task_id].set_status(TaskStatus.COMPLETE)
-        self.data_base.fetch_data(task_id)
-        return None
-
-    # Modify task attributes
-    def modify_task(self, task_id: int, name=None, description=None, due_date=None) -> Union[None, str]:
-        if task_id not in self.tasks:
-            return "Task ID not found"
-        task = self.tasks[task_id]
-        if name:
-            task.set_name(name)
-        if description:
-            task.set_description(description)
-        if due_date:
-            task.set_due_date(due_date)
-        return None
-
-    # Clear all tasks
-    def reset_tasks(self) -> None:
-        self.tasks.clear()
-
-    # Send notification email for a task
-    def send_notification(self, task_id: int, email_address: str) -> Union[None, str]:
-        if task_id not in self.tasks:
-            return "Task ID not found"
-        task = self.tasks[task_id]
-        subject = f"Notification for Task: {task.get_name()}"
-        body = f"Task {task.get_name()} is due on {task.get_due_date()}"
-        msg = MIMEText(body)
-        msg["Subject"] = subject
-        msg["From"] = "your_email@example.com"
-        msg["To"] = email_address
-
-        with smtplib.SMTP("smtp.example.com", 587) as server:
-            server.login("your_email@example.com", "your_password")
-            server.send_message(msg)
-        return None
-
-    # Get all tasks
-    def get_all_tasks(self) -> dict:
-        return self.tasks
+        self._db.update_task(task)
 
