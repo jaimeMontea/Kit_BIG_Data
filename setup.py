@@ -8,9 +8,8 @@ setup(
         # liste des dépendances:
         "numpy>=1.18.0",
     ],
-    author="Florent BRIAND, Maxime LEDIEU Jaime M, Edouad DUCLOY, Pierre ",
+    author="Florent BRIAND, Maxime LEDIEU Jaime MONTEA, Edouad DUCLOY, Pierre BILLAUD",
     author_email="florent.briand56@gmail.com etc..",
     description="To Do List helps you manage your agenda by creating a list of your tasks",
-    # L'URL de votre projet GitHub ou autre
     url="https://github.com/jaimeMontea/Kit_BIG_Data",
 )
