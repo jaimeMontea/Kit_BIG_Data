@@ -8,6 +8,11 @@ venv/
 *.venv/
 env/
 
+# Fichiers et dossiers liés à la distribution
+dist/
+build/
+*.egg-info/
+
 # Fichiers IDE
 .vscode/
 .idea/
