@@ -1,4 +1,4 @@
-name: Pydocstyle Check
+name: Check docstrings (docstyle)
 
 on: [push]
 

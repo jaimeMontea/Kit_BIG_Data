@@ -1,4 +1,4 @@
-name: Linting with flake8
+name: Check linting (flake8)
 
 on: [push]
 
