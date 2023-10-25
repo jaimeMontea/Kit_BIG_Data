@@ -3,12 +3,12 @@ import os
 import sqlite3
 from typing import Type
 
-import task
+from task import Task, TaskStatus
 
 
 class SQLiteDB():
 
-    def __init__(self, db_name: str) -> None:
+    def __init__(self, db_name: str= 'task_manager.db') -> None:
         current_dir = os.path.dirname(__file__)
         parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
@@ -61,10 +61,10 @@ class SQLiteDB():
             self.logger.info(f"Table {table_name} created successfully")
         except sqlite3.Error as e:
             self.logger.error(f"Error creating table: {e}")
-        finally: 
-            self.close_connection()
+        # finally: 
+        #     self.close_connection()
 
-    def insert_data(self, table_name:str, data: Type[task.Task]) -> None:
+    def insert_data(self, table_name:str, data) -> None:
         table_in_data_base = self.table_exists(table_name)
         if not table_in_data_base:
             self.create_table(table_name)
@@ -88,7 +88,11 @@ class SQLiteDB():
         except sqlite3.Error as e:
             self.logger.error(f"Error inserting data: {e}")
         finally: 
+            # print("New ID") # to be tested
+            # print(cursor.lastrowid)
+            task_id = cursor.lastrowid
             self.close_connection()
+            return task_id
 
     def fetch_data(self, task_id: int, to_do: str='COMPLETE') -> None:
         try:
@@ -96,14 +100,14 @@ class SQLiteDB():
             cursor = self.conn.cursor()
             if to_do == 'COMPLETE':
                 query = self.generate_sql_complete_statement()
-            cursor.execute(query, (task.TaskStatus.COMPLETE.value, task_id))
+            cursor.execute(query, (TaskStatus.COMPLETE.value, task_id))
             self.conn.commit()
             self.logger.info("Task completed successfully")
         except sqlite3.Error as e:
             self.logger.error(f"Error fetching data: {e}")
             return None
-        finally: 
-            self.close_connection()
+        # finally: 
+        #     self.close_connection()
 
     def remove_task(self, task_id: int) -> int:
         try:
@@ -123,11 +127,12 @@ class SQLiteDB():
             self.conn.close()
             self.logger.info("Database connection closed")
 
-    def generate_sql_creation_statement(self, table_name: str) -> str:
+    @staticmethod
+    def generate_sql_creation_statement(table_name: str) -> str:
         if table_name == 'tasks':
             create_table_sql = '''
                                     CREATE TABLE tasks (
-                                        id PRIMARY KEY INTEGER,
+                                        id INTEGER PRIMARY KEY,
                                         name TEXT,
                                         description TEXT,
                                         creation_date DATETIME,
@@ -147,7 +152,8 @@ class SQLiteDB():
                                                             '''
         return create_table_sql
 
-    def generate_sql_insert_statement(self, table_name: str) -> str:
+    @staticmethod
+    def generate_sql_insert_statement(table_name: str) -> str:
         if table_name == 'tasks':
             insert_sql = '''
                         INSERT INTO tasks
@@ -156,11 +162,11 @@ class SQLiteDB():
             '''
         return insert_sql
 
-    def generate_sql_remove_statement(self) -> str:
-        remove_sql = '''DELETE FROM tasks WHERE id = ?'''
-        return remove_sql
+    @staticmethod
+    def generate_sql_remove_statement() -> str:
+        return '''DELETE FROM tasks WHERE id = ?'''
 
-    def generate_sql_complete_statement(self) -> str:
-        complete_sql = '''UPDATE tasks SET status = ? WHERE id = ?'''
-        return complete_sql
+    @staticmethod
+    def generate_sql_complete_statement() -> str:
+        return '''UPDATE tasks SET status = ? WHERE id = ?'''
  

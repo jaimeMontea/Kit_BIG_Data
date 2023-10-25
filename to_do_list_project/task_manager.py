@@ -17,7 +17,7 @@ class TaskManager:
         # Task._next_id += 1  
 
         self.tasks = {}  # Initializing an empty dictionary to store Task objects
-        self.data_base = db.SQLiteDB('task_manager.db')
+        self.data_base = db.SQLiteDB()
 
     # Add a new task by creating a Task object
     def add_task(self, name: str, description: str, due_date: datetime, assignee: List[str], 
