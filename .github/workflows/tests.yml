@@ -1,25 +1,35 @@
 name: CI
 
-on:
-  push:
-    branches:
-      - main  # Vous pouvez spécifier la branche que vous souhaitez surveiller ici
+on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Choisissez l'environnement d'exécution approprié
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2  # Action pour récupérer le code depuis le dépôt GitHub
+      uses: actions/checkout@v2
 
     - name: Set up Python
-      uses: actions/setup-python@v2  # Action pour configurer Python
+      uses: actions/setup-python@v2
       with:
-        python-version: 3.x  # Spécifiez la version de Python que vous utilisez
+        python-version: 3.11
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt  # Installez les dépendances de votre projet
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+
+    - name: Cache Poetry dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/pypoetry
+        key: ${{ runner.os }}-poetry-${{ hashFiles('**/pyproject.toml') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
+
+    - name: Install dependencies using Poetry
+      run: poetry install
 
     - name: Run tests
-      run: pytest  # Exécutez vos tests unitaires avec pytest
+      run: poetry run pytest
