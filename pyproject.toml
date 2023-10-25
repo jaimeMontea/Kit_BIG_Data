@@ -82,6 +82,7 @@ zipp = "3.17.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.1.0"
+pydocstyle = "^6.3.0"
 
 [build-system]
 requires = ["poetry-core"]

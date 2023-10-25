@@ -31,5 +31,8 @@ jobs:
     - name: Install dependencies using Poetry
       run: poetry install
 
+    - name: Check docstrings with pydocstyle
+      run: poetry run pydocstyle to_do_list_project/ test/
+
     - name: Run tests
       run: poetry run pytest
