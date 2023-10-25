@@ -22,7 +22,7 @@ Si vous avez [Poetry](https://python-poetry.org/) installé :
 
 2. **Installez les dépendances**:
    poetry install
-   
+
 3. **Activez l'environnement virtuel**:
    poetry shell
 
@@ -60,6 +60,12 @@ Après avoir configuré l'environnement :
 
 2. **Lancez le projet**:
    python .\to_do_list_project\main.py
+
+### Documentation générée avec Sphinx :
+Ouvrir le fichier docs/_build/html/index.html sur votre navigateur internet.
+
+### Ouvrir l'interface graphique générée avec Streamlit :
+Dans .\to_do_list_project lancer $ streamlit run streamlit_app.py dans votre terminal.
 
 ### Normes de codage
 
