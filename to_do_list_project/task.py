@@ -67,8 +67,9 @@ class TaskPriority(Enum):
 
 class Task:
     """
-    Represents a Task object with attributes such as ID,
-    name, description, etc.
+    Represents a Task object.
+
+    It has attributes such as ID, name, description, etc.
     """
 
     def __init__(
