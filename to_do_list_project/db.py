@@ -3,7 +3,7 @@ import os
 import sqlite3
 from typing import Type, List
 
-from to_do_list_project.task import Task, TaskStatus
+from task import Task, TaskStatus
 
 
 class SQLiteDB():

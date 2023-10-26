@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
-from to_do_list_project.db import SQLiteDB  # Make sure to import specific exceptions if available
-from to_do_list_project.task import Task, TaskStatus, TaskPriority
+from db import SQLiteDB  # Make sure to import specific exceptions if available
+from task import Task, TaskStatus, TaskPriority
 
 class DatabaseConnectionError(Exception):
     """Exception raised when the database connection fails."""
