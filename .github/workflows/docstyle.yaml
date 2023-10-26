@@ -1,9 +1,9 @@
-name: Check tests with 90% coverage (pytest, pytest-cov)
+name: Check docstrings (docstyle)
 
 on: [push]
 
 jobs:
-  build:
+  style-check:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,5 +31,5 @@ jobs:
     - name: Install dependencies using Poetry
       run: poetry install
 
-    - name: Run tests
-      run: poetry run pytest --cov=to_do_list_project --cov-fail-under=90
+    - name: Check docstrings with pydocstyle
+      run: poetry run pydocstyle to_do_list_project/ test/

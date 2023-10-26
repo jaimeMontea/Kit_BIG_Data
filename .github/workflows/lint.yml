@@ -1,15 +1,14 @@
-name: Check tests with 90% coverage (pytest, pytest-cov)
+name: Check linting (flake8)
 
 on: [push]
 
 jobs:
-  build:
+  flake8-lint:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
+    - name: Check out code
       uses: actions/checkout@v2
-
+      
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -19,7 +18,7 @@ jobs:
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
 
-    - name: Cache Poetry dependencies
+    - name: Cache dependencies
       uses: actions/cache@v2
       with:
         path: |
@@ -27,9 +26,9 @@ jobs:
         key: ${{ runner.os }}-poetry-${{ hashFiles('**/pyproject.toml') }}
         restore-keys: |
           ${{ runner.os }}-poetry-
+          
+    - name: Install dependencies
+      run: poetry install --no-root
 
-    - name: Install dependencies using Poetry
-      run: poetry install
-
-    - name: Run tests
-      run: poetry run pytest --cov=to_do_list_project --cov-fail-under=90
+    - name: Run flake8
+      run: poetry run flake8 to_do_list_project/ test/
