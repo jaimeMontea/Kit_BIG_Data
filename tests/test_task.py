@@ -7,7 +7,13 @@ This script is dedicated to test all the functionalities from task.py file.
 from datetime import datetime, timedelta
 import pytest
 
-from to_do_list_project.task import Task, TaskStatus, TaskPriority, parse_date, format_date
+from to_do_list_project.task import (
+    Task,
+    TaskStatus,
+    TaskPriority,
+    parse_date,
+    format_date,
+)
 
 
 def test_parse_date() -> None:
@@ -138,8 +144,13 @@ def test_invalid_task_status() -> None:
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "Wash the dishes after dinner",
-                    due_date, assignee, status="In Progress")
+        task = Task(
+            "Dish",
+            "Wash the dishes after dinner",
+            due_date,
+            assignee,
+            status="In Progress",
+        )
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
@@ -154,8 +165,13 @@ def test_invalid_task_priority() -> None:
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "Wash the dishes after dinner",
-                    due_date, assignee, priority="Medium")
+        task = Task(
+            "Dish",
+            "Wash the dishes after dinner",
+            due_date,
+            assignee,
+            priority="Medium",
+        )
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
@@ -171,8 +187,13 @@ def test_invalid_task_categories() -> None:
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "Wash the dishes after dinner",
-                    due_date, assignee, categories=["Cleaning", 1])
+        task = Task(
+            "Dish",
+            "Wash the dishes after dinner",
+            due_date,
+            assignee,
+            categories=["Cleaning", 1],
+        )
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]

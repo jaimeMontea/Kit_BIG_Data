@@ -17,7 +17,7 @@ from typing import Type, List
 from .task import Task, TaskStatus
 
 
-class SQLiteDB():
+class SQLiteDB:
     """A class for managing tasks in a SQLite database."""
 
     def __init__(self, db_name: str = "task_manager.db") -> None:
@@ -34,7 +34,8 @@ class SQLiteDB():
         self.db_name = os.path.join(parent_dir, db_name)
         self.conn = None
         self.logger = self.setup_logger(
-            os.path.join(parent_dir, "logs", "data_base.log"))
+            os.path.join(parent_dir, "logs", "data_base.log")
+        )
 
     def setup_logger(self, log_file: str) -> Type[logging.Logger]:
         """
@@ -50,7 +51,8 @@ class SQLiteDB():
         if not logger.handlers:
             logger.setLevel(logging.INFO)
             formatter = logging.Formatter(
-                "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            )
             file_handler = logging.FileHandler(log_file)
             file_handler.setFormatter(formatter)
             logger.addHandler(file_handler)
@@ -79,11 +81,13 @@ class SQLiteDB():
             self.connect()
             cursor = self.conn.cursor()
             cursor.execute(
-                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
+                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'"
+            )
             response = cursor.fetchone()
         except sqlite3.Error as e:
             self.logger.error(
-                f"Error checking if table is already in data base: {e}")
+                f"Error checking if table is already in data base: {e}"
+            )
         finally:
             self.close_connection()
 
@@ -139,8 +143,19 @@ class SQLiteDB():
             priority = data.priority.value
             category = "" if not data.categories else " ".join(data.categories)
 
-            cursor.execute(insert_sql, (name, description, creation_date,
-                           due_date, assignee, status, priority, category))
+            cursor.execute(
+                insert_sql,
+                (
+                    name,
+                    description,
+                    creation_date,
+                    due_date,
+                    assignee,
+                    status,
+                    priority,
+                    category,
+                ),
+            )
             self.conn.commit()
             task_id = cursor.lastrowid
             self.logger.info("Data inserted successfully.")
@@ -150,7 +165,9 @@ class SQLiteDB():
             self.close_connection()
             return task_id
 
-    def fetch_data(self, task_id: int, to_do: str = "COMPLETE", task=None) -> None:
+    def fetch_data(
+        self, task_id: int, to_do: str = "COMPLETE", task=None
+    ) -> None:
         """
         Modify task.
 
@@ -170,11 +187,9 @@ class SQLiteDB():
                 self.logger.info("Task completed successfully")
             elif to_do == "MODIFY":
                 query = self.generate_sql_modify_statement()
-                cursor.execute(query, (task[0],
-                                       task[1],
-                                       task[2],
-                                       task[3],
-                                       task_id))
+                cursor.execute(
+                    query, (task[0], task[1], task[2], task[3], task_id)
+                )
                 self.logger.info("Task modified successfully")
             self.conn.commit()
         except sqlite3.Error as e:

@@ -16,20 +16,21 @@ from .task_manager import TaskManager
 from .task_manager import TaskNotFoundError
 
 
-logger = logging.getLogger('Task Manager')
+logger = logging.getLogger("Task Manager")
 
 
 def setup_logging() -> None:
     """Set up logging configurations."""
     current_dir = os.path.dirname(__file__)
     parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
-    log_file = os.path.join(parent_dir, 'logs', "user_input.log")
+    log_file = os.path.join(parent_dir, "logs", "user_input.log")
 
-    os.makedirs(os.path.join(parent_dir, 'logs'), exist_ok=True)
+    os.makedirs(os.path.join(parent_dir, "logs"), exist_ok=True)
 
     file_handler = logging.FileHandler(log_file)
     formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
@@ -37,7 +38,7 @@ def setup_logging() -> None:
 def validate_date(date_str: str) -> Tuple[bool, str]:
     """Validate a date string and return a datetime object if valid."""
     try:
-        due_date = datetime.strptime(date_str, '%d-%m-%Y')
+        due_date = datetime.strptime(date_str, "%d-%m-%Y")
         if due_date.date() < datetime.now().date():
             return False, "Due date must be in the future."
         return True, due_date
@@ -45,7 +46,9 @@ def validate_date(date_str: str) -> Tuple[bool, str]:
         return False, "Invalid date format."
 
 
-def validate_priority(priority_str: str) -> Tuple[bool, Union[str, TaskPriority]]:
+def validate_priority(
+    priority_str: str,
+) -> Tuple[bool, Union[str, TaskPriority]]:
     """Validate a priority."""
     try:
         return True, TaskPriority[priority_str.upper()]
@@ -54,8 +57,7 @@ def validate_priority(priority_str: str) -> Tuple[bool, Union[str, TaskPriority]
 
 
 def get_input(
-        prompt: str,
-        validator_func: Callable[[str], Tuple[bool, Union[int, str]]]
+    prompt: str, validator_func: Callable[[str], Tuple[bool, Union[int, str]]]
 ) -> Union[int, str]:
     """
     Repeatedly prompt the user for input until it passes a validation function.
@@ -79,20 +81,41 @@ def get_input(
 
 def add_task(task_manager: TaskManager) -> None:
     """Add a task."""
-    name = get_input("Enter task name: ", lambda x: (
-        bool(x), x if x else "Task name cannot be empty."))
-    description = get_input("Enter task description: ", lambda x: (
-        bool(x), x if x else "Task description cannot be empty."))
+    name = get_input(
+        "Enter task name: ",
+        lambda x: (bool(x), x if x else "Task name cannot be empty."),
+    )
+    description = get_input(
+        "Enter task description: ",
+        lambda x: (bool(x), x if x else "Task description cannot be empty."),
+    )
     due_date = get_input("Enter due date (DD-MM-YYYY): ", validate_date)
-    assignees = get_input("Enter assignees (comma separated): ", lambda x: (
-        bool(x.split(',')), x.split(',') if x else "Assignees list cannot be empty."))
+    assignees = get_input(
+        "Enter assignees (comma separated): ",
+        lambda x: (
+            bool(x.split(",")),
+            x.split(",") if x else "Assignees list cannot be empty.",
+        ),
+    )
     priority = get_input(
-        "Enter task priority (LOW, MEDIUM, HIGH): ", validate_priority)
-    categories = get_input("Enter task categories (comma separated): ", lambda x: (
-        bool(x.split(',')), x.split(',') if x else "Categories list cannot be empty."))
+        "Enter task priority (LOW, MEDIUM, HIGH): ", validate_priority
+    )
+    categories = get_input(
+        "Enter task categories (comma separated): ",
+        lambda x: (
+            bool(x.split(",")),
+            x.split(",") if x else "Categories list cannot be empty.",
+        ),
+    )
 
     result = task_manager.add_task(
-        name, description, due_date, assignees, priority=priority, categories=categories)
+        name,
+        description,
+        due_date,
+        assignees,
+        priority=priority,
+        categories=categories,
+    )
     if result is None:
         print(f"Task '{name}' added successfully.")
     else:
@@ -179,7 +202,7 @@ def display_all_tasks(task_manager):
 def main():
     """Run the Task Manager app."""
     setup_logging()
-    task_manager = TaskManager('tasks.db')
+    task_manager = TaskManager("tasks.db")
 
     while True:
         print("\n--- Task Manager ---")

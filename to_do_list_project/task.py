@@ -14,7 +14,7 @@ from typing import Union
 
 def parse_date(date_string: str) -> datetime:
     """Convert a string in the format 'DD-MM-YYYY' to a datetime object."""
-    if not re.match(r'\d{2}-\d{2}-\d{4}', date_string):
+    if not re.match(r"\d{2}-\d{2}-\d{4}", date_string):
         raise ValueError("Invalid date format. It should be 'DD-MM-YYYY'")
     return datetime.strptime(date_string, "%d-%m-%Y")
 
@@ -67,11 +67,16 @@ class TaskPriority(Enum):
 class Task:
     """Represents a Task object with attributes such as ID, name, description, etc."""
 
-    def __init__(self, name: str, description: str, due_date: Union[datetime, str],
-                 assignee: list[str],
-                 status: TaskStatus = TaskStatus.IN_PROGRESS,
-                 priority: TaskPriority = TaskPriority.MEDIUM,
-                 categories: list[str] = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        due_date: Union[datetime, str],
+        assignee: list[str],
+        status: TaskStatus = TaskStatus.IN_PROGRESS,
+        priority: TaskPriority = TaskPriority.MEDIUM,
+        categories: list[str] = None,
+    ) -> None:
         """
         Initialize a Task object.
 
@@ -151,10 +156,12 @@ class Task:
 
     @assignee.setter
     def assignee(self, new_assignee: list[str]) -> None:
-        if not new_assignee or not all(isinstance(assignee, str)
-                                       and assignee for assignee in new_assignee):
+        if not new_assignee or not all(
+            isinstance(assignee, str) and assignee for assignee in new_assignee
+        ):
             raise ValueError(
-                "Assignee list must be a non-empty list of non-empty strings")
+                "Assignee list must be a non-empty list of non-empty strings"
+            )
         self._assignee = new_assignee
 
     @property
@@ -186,6 +193,9 @@ class Task:
 
     @categories.setter
     def categories(self, new_categories: list[str]) -> None:
-        if not all(isinstance(category, str) and category for category in new_categories):
+        if not all(
+            isinstance(category, str) and category
+            for category in new_categories
+        ):
             raise ValueError("Categories must be a list of non-empty strings")
         self._categories = new_categories

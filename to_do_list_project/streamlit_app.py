@@ -28,8 +28,13 @@ def main() -> None:
     st.title("Task Manager")
 
     # Navigation
-    menu = ["Home", "Create Task", "View Tasks",
-            "Complete Task", "Delete Task"]
+    menu = [
+        "Home",
+        "Create Task",
+        "View Tasks",
+        "Complete Task",
+        "Delete Task",
+    ]
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Home":
@@ -41,12 +46,14 @@ def main() -> None:
 
         task_name = st.text_input("Task Name")
         task_description = st.text_area("Description")
-        task_due_date = st.date_input("Due Date").strftime('%d-%m-%Y')
+        task_due_date = st.date_input("Due Date").strftime("%d-%m-%Y")
         task_assignee = st.text_input("Assignee")
         task_status = st.selectbox(
-            "Status", [status.value for status in TaskStatus])
+            "Status", [status.value for status in TaskStatus]
+        )
         task_priority = st.selectbox(
-            "Priority", [priority.value for priority in TaskPriority])
+            "Priority", [priority.value for priority in TaskPriority]
+        )
         task_categories = st.text_input("Categories (comma-separated)")
 
         if st.button("Submit"):
@@ -57,9 +64,9 @@ def main() -> None:
                 assignee=[task_assignee],
                 status=TaskStatus(task_status),
                 priority=TaskPriority(task_priority),
-                categories=task_categories.split(',')
+                categories=task_categories.split(","),
             )
-            database.insert_data('tasks', new_task)
+            database.insert_data("tasks", new_task)
             st.success("Task created successfully!")
 
     elif choice == "View Tasks":
