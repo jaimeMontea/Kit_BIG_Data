@@ -66,7 +66,7 @@ def get_input(
     - prompt (str): The prompt displayed to the user.
     - validator_func (function): A function that validates the user's input.
       It should return a tuple (bool, value), where bool indicates if the
-      validation succeeded and value is the validated value or an error message.
+      validation succeeded and value is the validated value or an error.
 
     Returns:
     - value: The user's input after it has been validated.

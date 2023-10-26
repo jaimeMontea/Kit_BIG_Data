@@ -28,7 +28,8 @@ def test_parse_date() -> None:
 
 def test_format_date() -> None:
     """
-    Check that the format_date function returns a string corresponding to the date object indicated
+    Check that the format_date function returns a string corresponding to the
+    date object indicated
     """
     date_obj = datetime(2023, 10, 31)
     expected_string = "31-10-2023"
@@ -77,7 +78,8 @@ def test_task_modification() -> None:
 
 def test_invalid_task_name() -> None:
     """
-    Check that the Task object raises an error when initialized or modified with an empty name
+    Check that the Task object raises an error when initialized or modified
+    with an empty name
     """
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
@@ -108,7 +110,8 @@ def test_invalid_task_desciption() -> None:
 
 def test_invalid_task_due_date() -> None:
     """
-    Check that the Task object raises an error when initialized or modified with a past due date
+    Check that the Task object raises an error when initialized or modified
+    with a past due date
     """
     with pytest.raises(ValueError):
         due_date = datetime.now() - timedelta(days=1)
@@ -139,7 +142,8 @@ def test_invalid_task_assignee() -> None:
 
 def test_invalid_task_status() -> None:
     """
-    Check that the Task object raises an error when initialized or modified with an invalid status
+    Check that the Task object raises an error when initialized or modified
+    with an invalid status
     """
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
@@ -160,7 +164,8 @@ def test_invalid_task_status() -> None:
 
 def test_invalid_task_priority() -> None:
     """
-    Check that the Task object raises an error when initialized or modified with an invalid priority
+    Check that the Task object raises an error when initialized or modified
+    with an invalid priority
     """
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)

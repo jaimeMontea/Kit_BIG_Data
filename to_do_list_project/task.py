@@ -1,9 +1,10 @@
 """
 task.py.
 
-This script provides utilities and classes to create, modify, and manage tasks.
-Tasks can have various attributes such as name, description, due date, assignees,
-status, priority, and categories.
+This script provides utilities and classes to create,
+modify, and manage tasks.Tasks can have various attributes
+such as name, description, due date, assignees, status,
+priority, and categories.
 """
 
 from datetime import datetime
@@ -65,7 +66,10 @@ class TaskPriority(Enum):
 
 
 class Task:
-    """Represents a Task object with attributes such as ID, name, description, etc."""
+    """
+    Represents a Task object with attributes such as ID,
+    name, description, etc.
+    """
 
     def __init__(
         self,
@@ -84,11 +88,15 @@ class Task:
         name (str): The name of the task.
         description (str): The description of the task.
         due_date (Union[datetime, str]): The due date of the task.
-        Can be either a datetime object or a string in 'DD-MM-YYYY' format.
+        Can be either a datetime object or a string in
+        'DD-MM-YYYY' format.
         assignee (list[str]): List of assignees for the task.
-        status (TaskStatus, optional): The status of the task. Default is IN_PROGRESS.
-        priority (TaskPriority, optional): The priority of the task. Default is MEDIUM.
-        categories (list[str], optional): The categories the task belongs to. Default is None.
+        status (TaskStatus, optional): The status of the task.
+        Default is IN_PROGRESS.
+        priority (TaskPriority, optional): Priority of the task.
+        Default is MEDIUM.
+        categories (list[str], optional): Categories the task belongs to.
+        Default is None.
         """
         if categories is None:
             categories = []

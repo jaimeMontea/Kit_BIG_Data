@@ -114,7 +114,8 @@ def task() -> Task:
 #     in_memory_db.insert_data("tasks", task)
 
 #     cursor = in_memory_db.conn.cursor()
-#     cursor.execute("SELECT name FROM task WHERE name='Dish' AND assignee='Edouard';")
+#      cursor.execute("SELECT name FROM task
+#                     WHERE name='Dish' AND assignee='Edouard';")
 #     result = cursor.fetchone()
 #     assert result is not None
 

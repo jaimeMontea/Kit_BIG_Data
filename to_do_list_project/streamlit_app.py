@@ -1,15 +1,15 @@
 """
 streamlit_app.py.
 
-This is the script launching the grahical interface of the Task Manager application.
-It drives the user interface of the Task Manager application using the
+This is the script launching the web UI of the Task Manager application.
+It drives the UI of the Task Manager application using the
 Streamlit framework.
 """
 
 import streamlit as st
 
-from to_do_list_project.db import SQLiteDB
-from to_do_list_project.task import Task, TaskStatus, TaskPriority
+from .db import SQLiteDB
+from .task import Task, TaskStatus, TaskPriority
 
 database = SQLiteDB("tasks.db")
 

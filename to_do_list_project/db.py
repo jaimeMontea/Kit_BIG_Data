@@ -1,12 +1,15 @@
 """
 db.py.
 
-This is the script allowing for management and interaction with a SQLite database.
-The module provides the SQLiteDB class which facilitates tasks such as establishing
-connections, logging database activities, and performing various database operations.
+This is the script allowing for management and interaction
+with a SQLite database.The module provides the SQLiteDB class
+which facilitates tasks such as establishing connections,
+logging database activities, and performing various database
+operations.
 
-The primary class, SQLiteDB, is designed to handle tasks specific to a task manager application.
-This includes methods for adding, removing, and updating tasks, among others.
+The primary class, SQLiteDB, is designed to handle tasks specific
+to a task manager application.This includes methods for adding,
+removing, and updating tasks, among others.
 """
 
 import logging
@@ -23,10 +26,10 @@ class SQLiteDB:
     def __init__(self, db_name: str = "task_manager.db") -> None:
         """Initialize the SQLiteDB object.
 
-        Sets up the database connection and the logger for database operations.
+        Sets up the database connection and the logger for db operations.
 
         Args:
-            db_name (str): Name of the database file. Default is "task_manager.db".
+            db_name (str): Name of the db file. Default is "task_manager.db".
         """
         current_dir = os.path.dirname(__file__)
         parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
@@ -81,7 +84,7 @@ class SQLiteDB:
             self.connect()
             cursor = self.conn.cursor()
             cursor.execute(
-                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'"
+            f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'"
             )
             response = cursor.fetchone()
         except sqlite3.Error as e:
@@ -175,7 +178,8 @@ class SQLiteDB:
 
         Args:
             task_id (int): Task id of task to be modified.
-            to_do (str, optional): Action to be performed on the task. Defaults to "COMPLETE".
+            to_do (str, optional): Action to be performed
+            on the task. Defaults to "COMPLETE".
             task (_type_, optional): Task to be modified. Defaults to None.
         """
         try:
@@ -221,7 +225,7 @@ class SQLiteDB:
         Return all tasks stored in data base.
 
         Returns:
-            List[tuple]: List of tuples. This list represents all tasks in data base.
+            List[tuple]: List of tuples. This list has all tasks in db.
                          Each tuple represents the data of a task.
         """
         data = None
@@ -289,9 +293,10 @@ class SQLiteDB:
         """
         if table_name == "tasks":
             insert_sql = """
-                        INSERT INTO tasks
-                        (name, description, creation_date, due_date, assignee, status, priority, category)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO tasks
+            (name, description, creation_date, due_date,
+            assignee, status, priority, category)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """
         return insert_sql
 

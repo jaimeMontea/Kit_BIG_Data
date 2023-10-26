@@ -66,7 +66,8 @@ def test_complete_task(task_manager: TaskManager) -> None:
 
 def test_modify_task(task_manager: TaskManager) -> None:
     """
-    Test if the name of a task can be successfully modified in the task manager.
+    Test if the name of a task can be successfully modified in
+    the task manager.
     """
     due_date = datetime.now() + timedelta(days=1)
     task_manager.add_task(
@@ -79,7 +80,8 @@ def test_modify_task(task_manager: TaskManager) -> None:
 
 def test_send_notification(task_manager: TaskManager) -> None:
     """
-    Test if a notification can be successfully sent for a task in the task manager.
+    Test if a notification can be successfully sent for a task
+    in the task manager.
     """
     due_date = datetime.now() + timedelta(days=1)
     task_manager.add_task(
@@ -92,7 +94,8 @@ def test_send_notification(task_manager: TaskManager) -> None:
 
 def test_send_notification_invalid_task_id(task_manager: TaskManager) -> None:
     """
-    Test the case when trying to send a notification for a non-existent task ID.
+    Test the case when trying to send a notification for a non-existent
+    task ID.
     """
     result = task_manager.send_notification(12345, "recipient@example.com")
     assert result == "Task ID not found"
@@ -100,7 +103,8 @@ def test_send_notification_invalid_task_id(task_manager: TaskManager) -> None:
 
 def test_send_notification_invalid_email(task_manager: TaskManager) -> None:
     """
-    Test the case when trying to send a notification to an invalid email address.
+    Test the case when trying to send a notification to an invalid email
+    address.
     """
     due_date = datetime.now() + timedelta(days=1)
     task_manager.add_task(
