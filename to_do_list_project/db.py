@@ -119,7 +119,7 @@ class SQLiteDB():
             table_name (str): Table where data is going to be inserted.
             data (Type[Task]): Task to be inserted in table.
 
-        Returns: 
+        Returns:
             Type[Task]: Task id of new task inserted.
         """
         table_in_data_base = self.table_exists(table_name)
@@ -153,7 +153,7 @@ class SQLiteDB():
     def fetch_data(self, task_id: int, to_do: str = "COMPLETE", task=None) -> None:
         """
         Modify task.
-        
+
         It changes the status to COMPLETE by default.
 
         Args:
@@ -206,7 +206,7 @@ class SQLiteDB():
         Return all tasks stored in data base.
 
         Returns:
-            List[tuple]: List of tuples. This list represents all tasks in data base. 
+            List[tuple]: List of tuples. This list represents all tasks in data base.
                          Each tuple represents the data of a task.
         """
         data = None
@@ -235,7 +235,7 @@ class SQLiteDB():
         Args:
             table_name: Table to be created.
 
-        Returns: 
+        Returns:
             str: SQL statement.
         """
         if table_name == "tasks":
@@ -267,9 +267,9 @@ class SQLiteDB():
         Return SQL statement to insert a new data.
 
         Args:
-            table_name: Table where the new data is going to be inserted. 
+            table_name: Table where the new data is going to be inserted.
 
-        Returns: 
+        Returns:
             str: SQL statement.
         """
         if table_name == "tasks":
@@ -285,7 +285,7 @@ class SQLiteDB():
         """
         Return SQL statement to delete a task.
 
-        Returns: 
+        Returns:
             str: SQL statement.
         """
         return """DELETE FROM tasks WHERE id = ?"""
@@ -305,8 +305,8 @@ class SQLiteDB():
         """
         Return SQL statement to modifi a task.
 
-        Args: 
-            str: SQL statement. 
+        Args:
+            str: SQL statement.
         """
         return """UPDATE tasks
                   SET  name = ?,

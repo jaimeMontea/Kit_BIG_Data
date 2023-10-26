@@ -1,14 +1,14 @@
 """
 task_manager.py.
 
-This module provides functionalities to manage tasks using an SQLite database. It primarily 
-contains the `TaskManager` class that enables operations like loading tasks from the database, 
+This module provides functionalities to manage tasks using an SQLite database. It primarily
+contains the `TaskManager` class that enables operations like loading tasks from the database,
 adding new tasks, removing tasks, marking tasks as complete, listing all tasks, and modifying tasks.
 
 Classes:
     - DatabaseConnectionError: Raised when there's a failure connecting to the database.
     - TaskNotFoundError: Raised when a specified task is not found in the manager.
-    - TaskManager: The main class to manage tasks with methods to handle CRUD operations 
+    - TaskManager: The main class to manage tasks with methods to handle CRUD operations
                    and other utility functionalities related to tasks.
 """
 

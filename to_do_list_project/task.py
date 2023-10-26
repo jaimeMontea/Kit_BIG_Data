@@ -1,9 +1,9 @@
 """
 task.py.
 
-This script provides utilities and classes to create, modify, and manage tasks. 
-Tasks can have various attributes such as name, description, due date, assignees, 
-status, priority, and categories. 
+This script provides utilities and classes to create, modify, and manage tasks.
+Tasks can have various attributes such as name, description, due date, assignees,
+status, priority, and categories.
 """
 
 from datetime import datetime
@@ -78,7 +78,7 @@ class Task:
         Parameters:
         name (str): The name of the task.
         description (str): The description of the task.
-        due_date (Union[datetime, str]): The due date of the task. 
+        due_date (Union[datetime, str]): The due date of the task.
         Can be either a datetime object or a string in 'DD-MM-YYYY' format.
         assignee (list[str]): List of assignees for the task.
         status (TaskStatus, optional): The status of the task. Default is IN_PROGRESS.

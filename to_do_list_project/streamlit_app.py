@@ -2,7 +2,7 @@
 streamlit_app.py.
 
 This is the script launching the grahical interface of the Task Manager application.
-It drives the user interface of the Task Manager application using the 
+It drives the user interface of the Task Manager application using the
 Streamlit framework.
 """
 
@@ -17,7 +17,7 @@ database = SQLiteDB("tasks.db")
 def main() -> None:
     """
     Drives the user interface for the Task Manager application using Streamlit.
-    
+
     Features:
     - Home: Welcome page.
     - Create Task: Input form to add tasks to the database.

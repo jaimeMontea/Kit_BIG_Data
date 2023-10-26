@@ -12,7 +12,7 @@ from to_do_list_project.task import Task, TaskStatus, TaskPriority, parse_date, 
 
 def test_parse_date() -> None:
     """
-    Check that the parse_date function returns a datetime object corresponding 
+    Check that the parse_date function returns a datetime object corresponding
     to the date string indicated
     """
     date_string = "31-10-2023"
@@ -86,7 +86,7 @@ def test_invalid_task_name() -> None:
 
 def test_invalid_task_desciption() -> None:
     """
-    Check that the Task object raises an error when initialized or modified 
+    Check that the Task object raises an error when initialized or modified
     with an empty description
     """
     with pytest.raises(ValueError):
@@ -117,7 +117,7 @@ def test_invalid_task_due_date() -> None:
 
 def test_invalid_task_assignee() -> None:
     """
-    Check that the Task object raises an error when initialized or modified 
+    Check that the Task object raises an error when initialized or modified
     with an invalid assignee list
     """
     with pytest.raises(ValueError):
@@ -165,7 +165,7 @@ def test_invalid_task_priority() -> None:
 
 def test_invalid_task_categories() -> None:
     """
-    Check that the Task object raises an error when initialized or modified 
+    Check that the Task object raises an error when initialized or modified
     with an invalid categories list
     """
     with pytest.raises(ValueError):

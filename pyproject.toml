@@ -84,6 +84,7 @@ zipp = "3.17.0"
 flake8 = "^6.1.0"
 pydocstyle = "^6.3.0"
 pytest-cov = "^4.1.0"
+autopep8 = "^2.0.4"
 
 [build-system]
 requires = ["poetry-core"]
