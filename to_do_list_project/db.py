@@ -15,7 +15,7 @@ removing, and updating tasks, among others.
 import logging
 import os
 import sqlite3
-from typing import Type, List
+from typing import List, Type
 
 from .task import Task, TaskStatus
 
@@ -34,7 +34,11 @@ class SQLiteDB:
         current_dir = os.path.dirname(__file__)
         parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
-        self.db_name = os.path.join(parent_dir, db_name)
+        if db_name == ":memory:":
+            self.db_name = db_name
+        else:
+            self.db_name = os.path.join(parent_dir, db_name)
+
         self.conn = None
         self.logger = self.setup_logger(
             os.path.join(parent_dir, "logs", "data_base.log")

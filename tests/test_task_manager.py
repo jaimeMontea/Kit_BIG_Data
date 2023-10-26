@@ -7,13 +7,14 @@ This script is dedicated to test all the functionalities from db.py file.
 from datetime import datetime, timedelta
 import pytest
 
+from to_do_list_project.db import SQLiteDB
 from to_do_list_project.task_manager import TaskManager, TaskStatus
 
 
 @pytest.fixture
-def task_manager():
+def task_manager() -> TaskManager:
     """Fixture to create and return a new TaskManager instance."""
-    return TaskManager("tasks")
+    return TaskManager(":memory:")
 
 
 def test_add_task(task_manager: TaskManager) -> None:
@@ -25,19 +26,21 @@ def test_add_task(task_manager: TaskManager) -> None:
         "Test Task", "Description", due_date, ["Edouard"]
     )
     assert result is None
-    assert len(task_manager.tasks) == 1
+    assert len(task_manager._tasks) == 1
 
 
 def test_add_task_past_due_date(task_manager: TaskManager) -> None:
     """
-    Test if a task with a past due date returns the appropriate error message.
+    Test if a task with a past due date raises the appropriate error.
     """
     due_date = datetime.now() - timedelta(days=1)
-    result = task_manager.add_task(
-        "Expired Task", "Description", due_date, ["Edouard"]
-    )
-    assert result == "Due date must be in the future."
-    assert len(task_manager.tasks) == 0
+
+    with pytest.raises(ValueError, match="Due date must be a future date"):
+        task_manager.add_task(
+            "Expired Task", "Description", due_date, ["Edouard"]
+        )
+
+    assert len(task_manager._tasks) == 0
 
 
 def test_delete_task(task_manager: TaskManager) -> None:
@@ -45,10 +48,12 @@ def test_delete_task(task_manager: TaskManager) -> None:
     Test if a task can be successfully deleted from the task manager.
     """
     due_date = datetime.now() + timedelta(days=1)
-    task_manager.add_task("Test Task", "Description", due_date, ["Edouard"])
-    task_id = list(task_manager.tasks.keys())[0]
-    task_manager.delete_task(task_id)
-    assert len(task_manager.tasks) == 0
+    result = task_manager.add_task(
+        "Test Task", "Description", due_date, ["Edouard"]
+    )
+    assert len(task_manager._tasks) == 1
+    task_manager.remove_task(result)
+    assert not task_manager._tasks
 
 
 def test_complete_task(task_manager: TaskManager) -> None:
@@ -59,9 +64,9 @@ def test_complete_task(task_manager: TaskManager) -> None:
     task_manager.add_task(
         "Test Task", "Description", due_date, ["user@example.com"]
     )
-    task_id = list(task_manager.tasks.keys())[0]
+    task_id = list(task_manager._tasks.keys())[0]
     task_manager.complete_task(task_id)
-    assert task_manager.tasks[task_id].status == TaskStatus.COMPLETE
+    assert task_manager._tasks[task_id].status == TaskStatus.COMPLETE
 
 
 def test_modify_task(task_manager: TaskManager) -> None:
@@ -73,9 +78,9 @@ def test_modify_task(task_manager: TaskManager) -> None:
     task_manager.add_task(
         "Test Task", "Description", due_date, ["user@example.com"]
     )
-    task_id = list(task_manager.tasks.keys())[0]
+    task_id = list(task_manager._tasks.keys())[0]
     task_manager.modify_task(task_id, name="Modified Task")
-    assert task_manager.tasks[task_id].name == "Modified Task"
+    assert task_manager._tasks[task_id].name == "Modified Task"
 
 
 def test_send_notification(task_manager: TaskManager) -> None:
@@ -87,7 +92,7 @@ def test_send_notification(task_manager: TaskManager) -> None:
     task_manager.add_task(
         "Test Task", "Description", due_date, ["user@example.com"]
     )
-    task_id = list(task_manager.tasks.keys())[0]
+    task_id = list(task_manager._tasks.keys())[0]
     result = task_manager.send_notification(task_id, "recipient@example.com")
     assert result is None
 
@@ -110,7 +115,7 @@ def test_send_notification_invalid_email(task_manager: TaskManager) -> None:
     task_manager.add_task(
         "Test Task", "Description", due_date, ["user@example.com"]
     )
-    task_id = list(task_manager.tasks.keys())[0]
+    task_id = list(task_manager._tasks.keys())[0]
     result = task_manager.send_notification(task_id, "invalid_email")
     # Gérer le cas de l'e-mail invalide et retourner un message approprié
     assert result is None

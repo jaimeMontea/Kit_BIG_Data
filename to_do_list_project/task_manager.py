@@ -59,8 +59,8 @@ class TaskManager:
                 "Failed to connect to the database."
             ) from e
 
-        self._tasks = []  # Initialize an empty list for tasks
-        self.load_tasks_from_db()  # Load tasks
+        self._tasks = []
+        self.load_tasks_from_db()
 
     def load_tasks_from_db(self) -> None:
         """Load all tasks from database."""
