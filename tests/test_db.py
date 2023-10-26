@@ -1,31 +1,37 @@
-# In progress
+"""
+test_db.py
+
+This script is dedicated to test all the functionalities from db.py file.
+"""
+
+from datetime import datetime
+from unittest.mock import Mock, patch
 import pytest
-from datetime import datetime, timedelta
-from unittest.mock import Mock, MagicMock, patch
+
 from to_do_list_project.db import SQLiteDB
-import logging
-import os
-# from to_do_list_project.task import Task, TaskStatus, TaskPriority, parse_date, format_date
+from to_do_list_project.task import Task
 
-task_1 = Mock(return_value={"name": "Clean", 
-                            "description": "Clean room", "creation_date": "2023/11/12 10:00:00", 
-                            "due_date": "2023/12/12 10:00:00", "assignee": "James", 
-                            "status": "In Progress", "priority": "Medium", 
+
+task_1 = Mock(return_value={"name": "Clean",
+                            "description": "Clean room", "creation_date": "2023/11/12 10:00:00",
+                            "due_date": "2023/12/12 10:00:00", "assignee": "James",
+                            "status": "In Progress", "priority": "Medium",
                             "category": "House"})
 
-task_2 = Mock(return_value={"id": 2, "name": "Cook", 
-                            "description": "Cook lunch", "creation_date": "2023/11/13 10:00:00", 
-                            "due_date": "2023/12/13 10:00:00", "assignee": "James", 
-                            "status": "In Progress", "priority": "Medium", 
+task_2 = Mock(return_value={"id": 2, "name": "Cook",
+                            "description": "Cook lunch", "creation_date": "2023/11/13 10:00:00",
+                            "due_date": "2023/12/13 10:00:00", "assignee": "James",
+                            "status": "In Progress", "priority": "Medium",
                             "category": "House"})
 
-task_3 = Mock(return_value={"id": 3, "name": "Buy", 
-                            "description": "Buy lunch", "creation_date": "2023/11/13 10:00:00", 
-                            "due_date": "2023/12/13 10:00:00", "assignee": "John", 
-                            "status": "In Progress", "priority": "Medium", 
+task_3 = Mock(return_value={"id": 3, "name": "Buy",
+                            "description": "Buy lunch", "creation_date": "2023/11/13 10:00:00",
+                            "due_date": "2023/12/13 10:00:00", "assignee": "John",
+                            "status": "In Progress", "priority": "Medium",
                             "category": "House"})
 
-task_4 = Task("Buy", "Buy lunch", datetime.strptime("2023-12-13 10:00:00", '%Y-%m-%d %H:%M:%S'), "John")
+task_4 = Task("Buy", "Buy lunch", datetime.strptime(
+    "2023-12-13 10:00:00", '%Y-%m-%d %H:%M:%S'), "John")
 
 # @pytest.fixture
 # def in_memory_db():
@@ -36,13 +42,21 @@ task_4 = Task("Buy", "Buy lunch", datetime.strptime("2023-12-13 10:00:00", '%Y-%
 
 # # in_memory_db = SQLiteDB(":memory:")
 
+
 @pytest.fixture
-def mock_db():
+def mock_db() -> None:
+    """
+    Pytest fixture that mocks the 'connect' method of the SQLiteDB class.
+    """
     with patch.object(SQLiteDB, 'connect', return_value=Mock()) as mock_connect:
         yield mock_connect
 
+
 @pytest.fixture
-def task():
+def task() -> Task:
+    """
+    Pytest fixture that provides a predefined task instance.
+    """
     return task_4
 
 # def test_create_table(mock_db):
@@ -60,7 +74,7 @@ def task():
 #     result = cursor.fetchone()
 #     print("Hereeeee3", mock_db.query_all_data.call_count)
 #     assert result == task_1
-    
+
 #     mock_db.assert_called_once()
 
 #     due_date = datetime.now() + timedelta(days=1)
@@ -75,7 +89,6 @@ def task():
 #     result = cursor.fetchone()
 #     assert result is not None
 
-    
 
 if __name__ == "__main__":
     pytest.main()

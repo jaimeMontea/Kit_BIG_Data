@@ -58,7 +58,7 @@ class SQLiteDB():
         return logger
 
     def connect(self) -> None:
-        """Connects to the data base."""
+        """Connect to the data base."""
         try:
             self.conn = sqlite3.connect(self.db_name)
             self.logger.info(f"Connected to database: {self.db_name}")
@@ -143,7 +143,7 @@ class SQLiteDB():
                            due_date, assignee, status, priority, category))
             self.conn.commit()
             task_id = cursor.lastrowid
-            self.logger.info("Data inserted successfully")
+            self.logger.info("Data inserted successfully.")
         except sqlite3.Error as e:
             self.logger.error(f"Error inserting data: {e}")
         finally:
@@ -152,7 +152,9 @@ class SQLiteDB():
 
     def fetch_data(self, task_id: int, to_do: str = "COMPLETE", task=None) -> None:
         """
-        Modify task. It changes the status to COMPLETE by default. 
+        Modify task.
+        
+        It changes the status to COMPLETE by default.
 
         Args:
             task_id (int): Task id of task to be modified.
@@ -182,7 +184,7 @@ class SQLiteDB():
 
     def remove_task(self, task_id: int) -> None:
         """
-        Removes a task from the data base by its id.
+        Remove a task from the data base by its id.
 
         Args:
             task_id (int): Task id of the task to be removed.
@@ -201,7 +203,7 @@ class SQLiteDB():
 
     def get_all_tasks(self) -> List[tuple]:
         """
-        Returns all tasks stored in data base.
+        Return all tasks stored in data base.
 
         Returns:
             List[tuple]: List of tuples. This list represents all tasks in data base. 
@@ -220,9 +222,7 @@ class SQLiteDB():
             return data
 
     def close_connection(self) -> None:
-        """
-            Close connection of data base.
-        """
+        """Close connection of data base."""
         if self.conn:
             self.conn.close()
             self.logger.info("Database connection closed")
@@ -230,13 +230,13 @@ class SQLiteDB():
     @staticmethod
     def generate_sql_creation_statement(table_name: str) -> str:
         """
-            Generate the sql statement to create a table.
+        Generate the sql statement to create a table.
 
-            Args:
-                table_name: Table to be created.
+        Args:
+            table_name: Table to be created.
 
-            Returns: 
-                str: SQL statement.
+        Returns: 
+            str: SQL statement.
         """
         if table_name == "tasks":
             create_table_sql = """
@@ -264,13 +264,13 @@ class SQLiteDB():
     @staticmethod
     def generate_sql_insert_statement(table_name: str) -> str:
         """
-            Returns SQL statement to insert a new data. 
+        Return SQL statement to insert a new data.
 
-            Args:
-                table_name: Table where the new data is going to be inserted. 
+        Args:
+            table_name: Table where the new data is going to be inserted. 
 
-            Returns: 
-                str: SQL statement.
+        Returns: 
+            str: SQL statement.
         """
         if table_name == "tasks":
             insert_sql = """
@@ -283,30 +283,30 @@ class SQLiteDB():
     @staticmethod
     def generate_sql_remove_statement() -> str:
         """
-            Returns SQL statement to delete a task. 
+        Return SQL statement to delete a task.
 
-            Returns: 
-                str: SQL statement.
+        Returns: 
+            str: SQL statement.
         """
         return """DELETE FROM tasks WHERE id = ?"""
 
     @staticmethod
     def generate_sql_complete_statement() -> str:
         """
-            Returns SQL statement to change the status of a task. 
+        Return SQL statement to change the status of a task.
 
-            Returns: 
-                str: SQL statement. 
+        Returns:
+            str: SQL statement.
         """
         return """UPDATE tasks SET status = ? WHERE id = ?"""
 
     @staticmethod
     def generate_sql_modify_statement() -> str:
         """
-            Returns SQL statement to modifi a task. 
+        Return SQL statement to modifi a task.
 
-            Args: 
-                str: SQL statement. 
+        Args: 
+            str: SQL statement. 
         """
         return """UPDATE tasks
                   SET  name = ?,

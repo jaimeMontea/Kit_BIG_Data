@@ -29,13 +29,16 @@ class TaskNotFoundError(Exception):
 
 class TaskManager:
     """
-    A management system for tasks using an SQLite database. This class provides methods to handle 
-    the CRUD operations and other utility functionalities related to tasks.
+    A management system for tasks using an SQLite database.
+
+    This class provides methods to handle the CRUD operations and other utility functionalities
+    related to tasks.
     """
 
     def __init__(self, db_name: str) -> None:
         """
         Initialize the TaskManager object.
+
         Args:
             db_name (str): Name of the database.
 
@@ -52,7 +55,7 @@ class TaskManager:
         self.load_tasks_from_db()  # Load tasks
 
     def load_tasks_from_db(self) -> None:
-        """Loads all tasks from database."""
+        """Load all tasks from database."""
         try:
             all_tasks = self._db.get_all_tasks()
             if all_tasks:
@@ -78,7 +81,7 @@ class TaskManager:
         return task_id
 
     def remove_task(self, task_id: int) -> None:
-        """Removes task from database."""
+        """Remove task from database."""
         print(f"Tasks before attempting removal: {self._tasks}")
 
         self._db.remove_task(task_id)
@@ -118,7 +121,8 @@ class TaskManager:
                     new_due_date: datetime,
                     new_assignee: List[str]) -> None:
         """
-        Modifies an existing task's attributes.
+        Modify an existing task's attributes.
+
         Args:
             task_id (int): The ID of the task to modify.
             new_name (str, optional): New name for the task.
@@ -128,10 +132,10 @@ class TaskManager:
             new_status (TaskStatus, optional): New status for the task.
             new_priority (TaskPriority, optional): New priority for the task.
             new_categories (List[str], optional): New categories for the task.
+
         Raises:
             TaskNotFoundError: If the task is not found.
         """
-
         tasks_list = self._db.get_all_tasks()
 
         for index, task in enumerate(tasks_list):

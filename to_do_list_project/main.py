@@ -46,7 +46,7 @@ def validate_date(date_str: str) -> Tuple[bool, str]:
 
 
 def validate_priority(priority_str: str) -> Tuple[bool, Union[str, TaskPriority]]:
-    """Validates a priority."""
+    """Validate a priority."""
     try:
         return True, TaskPriority[priority_str.upper()]
     except KeyError:
@@ -78,7 +78,7 @@ def get_input(
 
 
 def add_task(task_manager: TaskManager) -> None:
-    """Adds a task."""
+    """Add a task."""
     name = get_input("Enter task name: ", lambda x: (
         bool(x), x if x else "Task name cannot be empty."))
     description = get_input("Enter task description: ", lambda x: (
@@ -100,7 +100,7 @@ def add_task(task_manager: TaskManager) -> None:
 
 
 def remove_task(task_manager: TaskManager) -> None:
-    """Removes a task by its ID."""
+    """Remove a task by its ID."""
     try:
         task_id = int(input("Enter the task ID to remove: "))
     except ValueError:
@@ -116,7 +116,7 @@ def remove_task(task_manager: TaskManager) -> None:
 
 
 def complete_task(task_manager: TaskManager) -> None:
-    """Marks a task as completed by its ID."""
+    """Mark a task as completed by its ID."""
     try:
         task_id = int(input("Enter the task ID to mark as completed: "))
         task_manager.complete_task(task_id)
@@ -130,7 +130,7 @@ def complete_task(task_manager: TaskManager) -> None:
 
 
 def modify_task(task_manager) -> None:
-    """Modifies a task by its ID."""
+    """Modify a task by its ID."""
     try:
         task_id = int(input("Enter the task ID to modify: "))
     except ValueError:
@@ -153,7 +153,7 @@ def modify_task(task_manager) -> None:
 
 def choice_validator(user_input: str) -> Tuple[bool, Union[str, int]]:
     """
-    Validates the user's choice.
+    Validate the user's choice.
 
     Parameters:
     - user_input (str): The user's input.
@@ -171,13 +171,13 @@ def choice_validator(user_input: str) -> Tuple[bool, Union[str, int]]:
 
 
 def display_all_tasks(task_manager):
-    """Displays all tasks."""
+    """Display all tasks."""
     all_tasks_with_ids = task_manager.get_all_tasks()
     print(all_tasks_with_ids)
 
 
 def main():
-    """Runs the Task Manager app."""
+    """Run the Task Manager app."""
     setup_logging()
     task_manager = TaskManager('tasks.db')
 

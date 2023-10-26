@@ -34,6 +34,7 @@ class TaskStatus(Enum):
     IN_PROGRESS (int): Indicates the task is currently being worked on.
     COMPLETE (int): Indicates the task has been finished.
     """
+
     START = 1
     IN_PROGRESS = 2
     COMPLETE = 3
@@ -53,6 +54,7 @@ class TaskPriority(Enum):
     MEDIUM (int): Task with moderate urgency.
     HIGH (int): Task with the highest urgency.
     """
+
     LOW = 1
     MEDIUM = 2
     HIGH = 3
@@ -63,9 +65,7 @@ class TaskPriority(Enum):
 
 
 class Task:
-    """
-    Represents a Task object with attributes such as ID, name, description, etc.
-    """
+    """Represents a Task object with attributes such as ID, name, description, etc."""
 
     def __init__(self, name: str, description: str, due_date: Union[datetime, str],
                  assignee: list[str],
