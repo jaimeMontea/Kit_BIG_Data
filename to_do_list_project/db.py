@@ -1,5 +1,5 @@
 """
-db.py
+db.py.
 
 This is the script allowing for management and interaction with a SQLite database.
 The module provides the SQLiteDB class which facilitates tasks such as establishing

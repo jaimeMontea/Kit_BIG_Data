@@ -1,5 +1,5 @@
 """
-main.py
+main.py.
 
 This is the main driver script for the Task Manager application.
 It provides a command-line interface where users can add, remove,

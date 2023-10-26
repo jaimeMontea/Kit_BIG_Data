@@ -1,5 +1,5 @@
 """
-task_manager.py
+task_manager.py.
 
 This module provides functionalities to manage tasks using an SQLite database. It primarily 
 contains the `TaskManager` class that enables operations like loading tasks from the database, 

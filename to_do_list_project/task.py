@@ -1,5 +1,5 @@
 """
-task.py
+task.py.
 
 This script provides utilities and classes to create, modify, and manage tasks. 
 Tasks can have various attributes such as name, description, due date, assignees, 

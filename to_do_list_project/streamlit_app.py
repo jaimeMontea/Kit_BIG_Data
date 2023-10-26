@@ -1,5 +1,5 @@
 """
-streamlit_app.py
+streamlit_app.py.
 
 This is the script launching the grahical interface of the Task Manager application.
 It drives the user interface of the Task Manager application using the 
