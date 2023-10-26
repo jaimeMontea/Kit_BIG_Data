@@ -85,8 +85,11 @@ python .\to_do_list_project\main.py
 Ouvrir le fichier docs/_build/html/index.html sur votre navigateur internet.
 
 ### Ouvrir l'interface graphique générée avec Streamlit :
-Dans .\to_do_list_project lancer $ streamlit run streamlit_app.py dans votre terminal.
 
+1. **Depuis la racine de votre projet**:
+```
+streamlit run ./to_do_list_project/streamlit_app.py
+```
 ### Normes de codage
 
 Nous suivons le guide de style [PEP8](https://peps.python.org/pep-0008/) pour assurer la clarté et la lisibilité du code.
