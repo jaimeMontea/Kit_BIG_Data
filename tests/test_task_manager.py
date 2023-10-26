@@ -12,7 +12,7 @@ from to_do_list_project.task_manager import TaskManager, TaskStatus
 @pytest.fixture
 def task_manager():
     """Fixture to create and return a new TaskManager instance."""
-    return TaskManager()
+    return TaskManager("tasks")
 
 
 def test_add_task(task_manager: TaskManager) -> None:

@@ -11,9 +11,9 @@ import logging
 import os
 from typing import Callable, Tuple, Union
 
-from task import TaskPriority
-from task_manager import TaskManager
-from task_manager import TaskNotFoundError
+from .task import TaskPriority
+from .task_manager import TaskManager
+from .task_manager import TaskNotFoundError
 
 
 logger = logging.getLogger('Task Manager')

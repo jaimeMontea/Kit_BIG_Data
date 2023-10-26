@@ -15,8 +15,8 @@ Classes:
 from datetime import datetime
 from typing import List
 
-from db import SQLiteDB
-from task import Task, TaskStatus, TaskPriority
+from .db import SQLiteDB
+from .task import Task, TaskStatus, TaskPriority
 
 
 class DatabaseConnectionError(Exception):

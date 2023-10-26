@@ -78,7 +78,7 @@ cd Kit_BIG_Data
 
 2. **Lancez le projet**:
 ```
-python .\to_do_list_project\main.py
+python -m to_do_list_project.main
 ```
 
 ### Documentation générée avec Sphinx :
@@ -88,7 +88,7 @@ Ouvrir le fichier docs/_build/html/index.html sur votre navigateur internet.
 
 1. **Depuis la racine de votre projet**:
 ```
-streamlit run ./to_do_list_project/streamlit_app.py
+python -m streamlit run to_do_list_project/streamlit_app.py
 ```
 ### Normes de codage
 

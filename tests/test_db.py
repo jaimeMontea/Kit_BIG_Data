@@ -11,7 +11,6 @@ import pytest
 from to_do_list_project.db import SQLiteDB
 from to_do_list_project.task import Task
 
-
 task_1 = Mock(return_value={"name": "Clean",
                             "description": "Clean room", "creation_date": "2023/11/12 10:00:00",
                             "due_date": "2023/12/12 10:00:00", "assignee": "James",
