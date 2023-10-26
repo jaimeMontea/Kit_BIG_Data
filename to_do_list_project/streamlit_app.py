@@ -1,7 +1,8 @@
 import streamlit as st
-from task import Task, TaskStatus, TaskPriority
-from db import SQLiteDB
 from datetime import datetime
+
+from to_do_list_project.db import SQLiteDB
+from to_do_list_project.task import Task, TaskStatus, TaskPriority
 
 # Set up the SQLite database
 database = SQLiteDB("tasks.db")
