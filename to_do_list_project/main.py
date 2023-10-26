@@ -9,9 +9,10 @@ modify, and view tasks.
 from datetime import datetime
 import logging
 import os
-from to_do_list_project.task import TaskPriority, TaskStatus  # Import the enumerations
-from to_do_list_project.task_manager import TaskManager
-from to_do_list_project.task_manager import TaskNotFoundError
+from task import TaskPriority, TaskStatus  # Import the enumerations
+from task_manager import TaskManager
+from task_manager import TaskNotFoundError
+from db import SQLiteDB
 
 # Initialize logging
 logging.basicConfig(filename='task_manager.log', level=logging.INFO)
@@ -84,46 +85,52 @@ def add_task(task_manager):
         print(result)
 
 def remove_task(task_manager):
-    task_id = int(input("Enter the task ID to remove: "))
+    try:
+        task_id = int(input("Enter the task ID to remove: "))
+    except ValueError:
+        print("Please enter a valid integer for task ID.")
+        logger.error("Input ID is not a valid integer")
+        return
     try:
         result = task_manager.remove_task(task_id)
         print("Task removed successfully.")
     except TaskNotFoundError:
         print("Task with given ID not found.")
+        logger.error("Task with given ID not found.")
 
-def complete_task(task_manager):
+def complete_task(task_manager: TaskManager) -> None:
     """Mark a task as completed by its ID."""
-    while True:
-        try:
-            task_id = int(input("Enter the task ID to mark as completed: "))
-            logger.info(f"task_id input to be completed: {task_id}")
-            result = task_manager.complete_task(task_id)
-            if result is None:
-                print(f"Task with ID {task_id} marked as complete.")
-                break
-            else:
-                print(result)
-        except ValueError:
-            print("Please enter a valid integer for task ID.")
-            logger.error(f"Input ID is not a valid integer")
+    try:
+        task_id = int(input("Enter the task ID to mark as completed: "))
+        task_manager.complete_task(task_id)
+        print(f"Task with ID {task_id} marked as complete.")
+    except TaskNotFoundError:
+        print("Task with given ID not found.")
+    except ValueError:
+        print("Please enter a valid integer for task ID.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 
 def modify_task(task_manager):
-    task_id = input("Enter the task ID to modify: ")
     try:
-        task = task_manager.get_task_by_id(int(task_id))
-    except TaskNotFoundError:
-        print("Task not found.")
-        return  # Exit the function if no task is found
+        task_id = int(input("Enter the task ID to modify: "))
+    except ValueError:
+        print("Please enter a valid integer for task ID.")
+        logger.error("Input ID is not a valid integer")
+        return
 
-    name = get_input(f"Current Name: {task.name}. Enter new task name (leave blank to keep unchanged): ", lambda x: (True, x))
-    description = get_input(f"Current Description: {task.description}. Enter new task description (leave blank to keep unchanged): ", lambda x: (True, x))
-    due_date = get_input(f"Current Due Date: {task.due_date.strftime('%d-%m-%Y')}. Enter new due date (DD-MM-YYYY, leave blank to keep unchanged): ", validate_date)
-    assignees_input = get_input(f"Current Assignees: {','.join(task.assignee)}. Enter new assignees (comma separated, leave blank to keep unchanged): ", lambda x: (True, [] if x.strip() == '' else x.split(",")))
+    tasks_list = task_manager.get_all_tasks()
+    list_id = [task[0] for task in tasks_list]
 
-    assignees = assignees_input if assignees_input != [] else task.assignee
-
-    task_manager.modify_task(int(task_id), name or task.name, description or task.description, due_date or task.due_date, assignees)
-    print(f"Task with ID {task_id} modified successfully.")
+    if task_id not in list_id:
+            print("ID not found")
+    
+    name = input("Enter new name[Press enter to not change]: ")
+    description = input("Enter new description[Press enter to not change]: ")
+    due_date = input("Enter new due_date[Press enter to not change]: ")
+    assignee = input("Enter new assignee[Press enter to not change]: ")
+    task_manager.modify_task(task_id, name, description, due_date, assignee)
 
 
 def choice_validator(user_input):
@@ -146,22 +153,9 @@ def choice_validator(user_input):
         return False, "Please enter a valid integer."
 
 def display_all_tasks(task_manager):
-    all_tasks_with_ids = task_manager._tasks
-    if not all_tasks_with_ids:
-        print("No tasks to display.")
-        return
-
-    print("\n--- All Tasks ---")
-    for task_id, task in all_tasks_with_ids.items():
-        print(f"Task ID: {task_id}")  # Display task ID
-        print(f"Task Name: {task.name}")
-        print(f"Task Description: {task.description}")
-        print(f"Due Date: {task.due_date.strftime('%d-%m-%Y')}")
-        print(f"Assignee: {', '.join(task.assignee)}")
-        print(f"Status: {task.status}")  # Since you've defined __str__ for the enum, it should print nicely
-        print(f"Priority: {task.priority}")  # Same as above
-        print(f"Categories: {', '.join(task.categories)}")
-        print("=" * 40)  # separator
+    all_tasks_with_ids = task_manager.get_all_tasks()  # Use the new method
+    
+    print(all_tasks_with_ids)
 
 def main():
     """Main function that runs the Task Manager app."""

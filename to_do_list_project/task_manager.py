@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
-from to_do_list_project.db import SQLiteDB  # Make sure to import specific exceptions if available
-from to_do_list_project.task import Task, TaskStatus, TaskPriority
+from db import SQLiteDB  # Make sure to import specific exceptions if available
+from task import Task, TaskStatus, TaskPriority
 
 class DatabaseConnectionError(Exception):
     """Exception raised when the database connection fails."""
@@ -26,45 +26,21 @@ class TaskManager:
             self._db = SQLiteDB(db_name)
         except Exception as e:
             raise DatabaseConnectionError("Failed to connect to the database.") from e
-        self._tasks = {}
-        self.load_tasks_from_db()
+            
+        self._tasks = []  # Initialize an empty list for tasks
+        self.load_tasks_from_db()  # Load tasks
 
     def load_tasks_from_db(self):
-        """
-        Load tasks from the database into the _tasks dictionary.
-        """
         try:
-            print("Trying to connect to DB...")  # Debug line
-            self._db.connect()
-            print("Connected to DB.")  # Debug line
-
-            cursor = self._db.conn.cursor()
-            print("Cursor created.")  # Debug line
-
-            cursor.execute("SELECT * FROM tasks")
-            print("SQL query executed.")  # Debug line
-
-            rows = cursor.fetchall()
-            print(f"Fetched rows: {rows}")  # Debug line
-
-            self._db.close_connection()
-            print("DB connection closed.")  # Debug line
-
-            for row in rows:
-                task_id, name, description, creation_date, due_date, assignee, status, priority, categories = row
-                print(f"task_id: {task_id}, name: {name}, description: {description}, creation_date: {creation_date}, due_date: {due_date}, assignee: {assignee}, status: {status}, priority: {priority}, categories: {categories}")
-
-                # Create Task object
-                task = Task(name, description, datetime.strptime(due_date, '%Y-%m-%d %H:%M:%S'), 
-                            assignee.split(','), TaskStatus[status], TaskPriority[priority], categories.split(','))
-
-                self._tasks[task_id] = task
-                print(f"Task added to _tasks: {task_id}")  # Debug line
-
-            print(f"Tasks after loading from DB: {self._tasks}")  # Debug line
-
+            all_tasks = self._db.get_all_tasks()
+            if all_tasks:
+                for task_tuple in all_tasks:
+                    task_id, name, description, creation_date, due_date, assignee, status, priority, categories = task_tuple
+                    task = Task(name, description, datetime.strptime(due_date, '%Y-%m-%d %H:%M:%S'), 
+                                assignee.split(','), TaskStatus[status], TaskPriority[priority], categories.split(','))
+                    self._tasks.append(task)
         except Exception as e:
-            print(f"Exception occurred: {e}")  # Debug line
+            print(f"Exception occurred: {e}")
 
 
 
@@ -72,16 +48,11 @@ class TaskManager:
                  status: TaskStatus = TaskStatus.IN_PROGRESS, 
                  priority: TaskPriority = TaskPriority.MEDIUM, 
                  categories: List[str] = None) -> int:
-        """
-        Add a new task to the manager.
-        Returns:
-            int: The ID of the newly created task.
-        """
         task = Task(name, description, due_date, assignee, status, priority, categories)
         task_id = self._db.insert_data('tasks', task)
-        self._tasks[task_id] = task
+        self._tasks.append(task)
         
-        print("Tasks after adding a new task:", self._tasks) # Debug line
+        print("Tasks after adding a new task:", self._tasks)
         return task_id
 
     def remove_task(self, task_id: int):
@@ -97,35 +68,33 @@ class TaskManager:
         print(f"Tasks after removal: {self._tasks}")
         return None
 
-    def list_all_tasks(self) -> List[Task]:
+    def complete_task(self, task_id: int):
         """
-        List all tasks managed by the TaskManager.
-        Returns:
-            List[Task]: List of all tasks.
-        """
-        return list(self._tasks.values())
-
-    def get_task_by_id(self, task_id: int) -> Task:
-        """
-        Get a task by its ID.
-        Returns:
-            Task: The task object.
+        Mark a task as complete.
+        
         Raises:
             TaskNotFoundError: If the task is not found.
         """
-        task = self._tasks.get(task_id)
-        if not task:
-            raise TaskNotFoundError("Task not found.")
-        return task
+        self._db.fetch_data(task_id, to_do='COMPLETE')
+    
+    def list_all_tasks(self) -> List[Task]:
+        return self._tasks
+
+    def get_task_by_id(self, task_id: int) -> Task:
+        for task in self._tasks:
+            if task.id == task_id:
+                return task
+        raise TaskNotFoundError("Task not found.")
+
+    def get_all_tasks(self):
+        return self._db.get_all_tasks()
+
 
     def modify_task(self, task_id: int, 
-                    new_name: str = None, 
-                    new_description: str = None, 
-                    new_due_date: datetime = None,
-                    new_assignee: List[str] = None,
-                    new_status: TaskStatus = None,
-                    new_priority: TaskPriority = None,
-                    new_categories: List[str] = None):
+                    new_name: str,  
+                    new_description: str, 
+                    new_due_date: datetime, 
+                    new_assignee: List[str]):
         """
         Modify an existing task's attributes.
         Args:
@@ -140,24 +109,27 @@ class TaskManager:
         Raises:
             TaskNotFoundError: If the task is not found.
         """
-        task = self._tasks.get(task_id)
-        if not task:
-            raise TaskNotFoundError("Task not found.")
+
+        tasks_list = self._db.get_all_tasks()
+        
+        for index, task in enumerate(tasks_list):
+            
+            if task_id == task[0]:
+                name = tasks_list[index][1]
+                description = tasks_list[index][2]
+                due_date = tasks_list[index][3]
+                assignee = tasks_list[index][4]
         
         if new_name:
-            task.name = new_name
+            name = new_name
         if new_description:
-            task.description = new_description
+            description = new_description
         if new_due_date:
-            task.due_date = new_due_date
+            due_date = new_due_date
         if new_assignee:
-            task.assignee = new_assignee
-        if new_status:
-            task.status = new_status
-        if new_priority:
-            task.priority = new_priority
-        if new_categories:
-            task.categories = new_categories
+            assignee = new_assignee
 
-        self._db.fetch_data(task_id, to_do="MODIFY", task=task) # This line was modified by Jaime
 
+        data = name, description, due_date, assignee
+
+        self._db.fetch_data(task_id, to_do="MODIFY", task=data) # This line was modified by Jaime
