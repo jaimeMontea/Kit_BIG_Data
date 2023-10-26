@@ -1,5 +1,5 @@
 import pytest
-from task_manager import TaskManager, Task, TaskStatus, TaskPriority
+from to_do_list_project.task_manager import TaskManager, Task, TaskStatus, TaskPriority
 from datetime import datetime, timedelta
 
 

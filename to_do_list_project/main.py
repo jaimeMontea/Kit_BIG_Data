@@ -9,9 +9,9 @@ modify, and view tasks.
 from datetime import datetime
 import logging
 import os
-from task import TaskPriority, TaskStatus  # Import the enumerations
-from task_manager import TaskManager
-from task_manager import TaskNotFoundError
+from to_do_list_project.task import TaskPriority, TaskStatus  # Import the enumerations
+from to_do_list_project.task_manager import TaskManager
+from to_do_list_project.task_manager import TaskNotFoundError
 
 # Initialize logging
 logging.basicConfig(filename='task_manager.log', level=logging.INFO)

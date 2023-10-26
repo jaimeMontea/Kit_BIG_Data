@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
-from db import SQLiteDB  # Make sure to import specific exceptions if available
-from task import Task, TaskStatus, TaskPriority
+from to_do_list_project.db import SQLiteDB  # Make sure to import specific exceptions if available
+from to_do_list_project.task import Task, TaskStatus, TaskPriority
 
 class DatabaseConnectionError(Exception):
     """Exception raised when the database connection fails."""
@@ -159,5 +159,5 @@ class TaskManager:
         if new_categories:
             task.categories = new_categories
 
-        self._db.update_task(task)
+        self._db.fetch_data(task_id, to_do="MODIFY", task=task) # This line was modified by Jaime
 
