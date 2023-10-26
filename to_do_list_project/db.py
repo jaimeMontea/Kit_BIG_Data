@@ -1,3 +1,14 @@
+"""
+db.py
+
+This is the script allowing for management and interaction with a SQLite database.
+The module provides the SQLiteDB class which facilitates tasks such as establishing
+connections, logging database activities, and performing various database operations.
+
+The primary class, SQLiteDB, is designed to handle tasks specific to a task manager application.
+This includes methods for adding, removing, and updating tasks, among others.
+"""
+
 import logging
 import os
 import sqlite3
@@ -7,25 +18,25 @@ from task import Task, TaskStatus
 
 
 class SQLiteDB():
-    """
-    Data base class where tasks are stored. 
-    """
-    def __init__(self, db_name: str= "task_manager.db") -> None:
-        """
-        Initialize a data base.
+    """A class for managing tasks in a SQLite database."""
+
+    def __init__(self, db_name: str = "task_manager.db") -> None:
+        """Initialize the SQLiteDB object.
+
+        Sets up the database connection and the logger for database operations.
 
         Args:
-            db_name (str): The name of the data base.
-
+            db_name (str): Name of the database file. Default is "task_manager.db".
         """
         current_dir = os.path.dirname(__file__)
         parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
         self.db_name = os.path.join(parent_dir, db_name)
-        self.conn = None 
-        self.logger = self.setup_logger(os.path.join(parent_dir, "logs", "data_base.log"))
+        self.conn = None
+        self.logger = self.setup_logger(
+            os.path.join(parent_dir, "logs", "data_base.log"))
 
-    def setup_logger(self, log_file: str) -> Type[logging.Logger]: 
+    def setup_logger(self, log_file: str) -> Type[logging.Logger]:
         """
         Set up a logger to write all actions in data base.
 
@@ -36,20 +47,18 @@ class SQLiteDB():
             Type[logging.Logger]: Logger object.
         """
         logger = logging.getLogger("task_manager_database")
-        if not len(logger.handlers):
+        if not logger.handlers:
             logger.setLevel(logging.INFO)
-            formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+            formatter = logging.Formatter(
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
             file_handler = logging.FileHandler(log_file)
             file_handler.setFormatter(formatter)
             logger.addHandler(file_handler)
-        
+
         return logger
 
-
     def connect(self) -> None:
-        """
-            Connect to the data base.
-        """
+        """Connects to the data base."""
         try:
             self.conn = sqlite3.connect(self.db_name)
             self.logger.info(f"Connected to database: {self.db_name}")
@@ -69,16 +78,18 @@ class SQLiteDB():
         try:
             self.connect()
             cursor = self.conn.cursor()
-            cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
+            cursor.execute(
+                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
             response = cursor.fetchone()
         except sqlite3.Error as e:
-            self.logger.error(f"Error checking if table is already in data base: {e}")
-        finally: 
+            self.logger.error(
+                f"Error checking if table is already in data base: {e}")
+        finally:
             self.close_connection()
-        
+
         if response is None:
             return False
-        else: 
+        else:
             return True
 
     def create_table(self, table_name: str) -> None:
@@ -97,10 +108,10 @@ class SQLiteDB():
             self.logger.info(f"Table {table_name} created successfully")
         except sqlite3.Error as e:
             self.logger.error(f"Error creating table: {e}")
-        finally: 
+        finally:
             self.close_connection()
 
-    def insert_data(self, table_name:str, data: Type[Task]) -> Type[Task]:
+    def insert_data(self, table_name: str, data: Type[Task]) -> Type[Task]:
         """
         Insert new data in table.
 
@@ -128,17 +139,18 @@ class SQLiteDB():
             priority = data.priority.value
             category = "" if not data.categories else " ".join(data.categories)
 
-            cursor.execute(insert_sql, (name, description, creation_date, due_date, assignee, status, priority, category))
+            cursor.execute(insert_sql, (name, description, creation_date,
+                           due_date, assignee, status, priority, category))
             self.conn.commit()
             task_id = cursor.lastrowid
             self.logger.info("Data inserted successfully")
         except sqlite3.Error as e:
             self.logger.error(f"Error inserting data: {e}")
-        finally: 
+        finally:
             self.close_connection()
             return task_id
 
-    def fetch_data(self, task_id: int, to_do: str="COMPLETE", task=None) -> None:
+    def fetch_data(self, task_id: int, to_do: str = "COMPLETE", task=None) -> None:
         """
         Modify task. It changes the status to COMPLETE by default. 
 
@@ -156,17 +168,16 @@ class SQLiteDB():
                 self.logger.info("Task completed successfully")
             elif to_do == "MODIFY":
                 query = self.generate_sql_modify_statement()
-                cursor.execute(query, (task[0], 
-                                       task[1], 
-                                       task[2], 
-                                       task[3], 
+                cursor.execute(query, (task[0],
+                                       task[1],
+                                       task[2],
+                                       task[3],
                                        task_id))
                 self.logger.info("Task modified successfully")
             self.conn.commit()
         except sqlite3.Error as e:
             self.logger.error(f"Error fetching data: {e}")
-            return None
-        finally: 
+        finally:
             self.close_connection()
 
     def remove_task(self, task_id: int) -> None:
@@ -176,7 +187,6 @@ class SQLiteDB():
         Args:
             task_id (int): Task id of the task to be removed.
         """
-
         try:
             self.connect()
             cursor = self.conn.cursor()
@@ -186,12 +196,12 @@ class SQLiteDB():
             self.logger.info("Data removed successfully")
         except sqlite3.Error as e:
             self.logger.error(f"Error removing data: {e}")
-        finally: 
+        finally:
             self.close_connection()
 
     def get_all_tasks(self) -> List[tuple]:
         """
-        Returs all tasks stored in data base. 
+        Returns all tasks stored in data base.
 
         Returns:
             List[tuple]: List of tuples. This list represents all tasks in data base. 
@@ -205,7 +215,7 @@ class SQLiteDB():
             data = cursor.fetchall()
         except sqlite3.Error as e:
             self.logger(f"Error getting all tasks: {e}")
-        finally: 
+        finally:
             self.close_connection()
             return data
 
@@ -242,7 +252,7 @@ class SQLiteDB():
                                         category TEXT
                                         )
                                                             """
-        else: 
+        else:
             create_table_sql = """
                                     CREATE TABLE task_managers (
                                         id INTEGER PRIMARY KEY,
@@ -298,7 +308,7 @@ class SQLiteDB():
             Args: 
                 str: SQL statement. 
         """
-        return """UPDATE tasks 
+        return """UPDATE tasks
                   SET  name = ?,
                        description = ?,
                        due_date = ?,
