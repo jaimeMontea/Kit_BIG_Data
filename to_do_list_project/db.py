@@ -84,7 +84,7 @@ class SQLiteDB:
             self.connect()
             cursor = self.conn.cursor()
             cursor.execute(
-                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'"# noqa: E501
+                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'"  # noqa: E501
             )
             response = cursor.fetchone()
         except sqlite3.Error as e:
