@@ -1,7 +1,8 @@
 import streamlit as st
-from task import Task, TaskStatus, TaskPriority
-from db import SQLiteDB
 from datetime import datetime
+
+from to_do_list_project.db import SQLiteDB
+from to_do_list_project.task import Task, TaskStatus, TaskPriority
 
 # Set up the SQLite database
 database = SQLiteDB("tasks.db")
@@ -24,7 +25,7 @@ def main():
 
         task_name = st.text_input("Task Name")
         task_description = st.text_area("Description")
-        task_due_date = st.date_input("Due Date")
+        task_due_date = st.date_input("Due Date").strftime('%d-%m-%Y')
         task_assignee = st.text_input("Assignee")
         task_status = st.selectbox(
             "Status", [status.value for status in TaskStatus])
