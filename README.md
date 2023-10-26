@@ -1,8 +1,8 @@
-# Kit_BIG_Data: Todo List Simple
+![task_manager_logo](https://github.com/jaimeMontea/Kit_BIG_Data/assets/45881846/b91f92a6-266d-433c-a075-cdb86ebf13ba)
 
 ## Présentation du Projet
 
-Ce projet est une simple todo list réalisée dans le cadre du mastère Intelligence Artificielle de Telecom Paris. Le principal objectif de ce projet est d'offrir une application simple et intuitive pour gérer des tâches.
+Ce projet porte sur la réalisation d'un __Task Manager__ réalisée dans le cadre du mastère __Intelligence Artificielle__ de Telecom Paris. Le principal objectif de ce travail est d'offrir une application simple et intuitive pour gérer des tâches.
 
 ## Configuration de l'environnement
 
