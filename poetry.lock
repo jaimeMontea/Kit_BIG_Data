@@ -1986,6 +1986,45 @@ files = [
 ]
 
 [[package]]
+name = "streamlit"
+version = "1.28.0"
+description = "A faster way to build and share data apps"
+optional = false
+python-versions = ">=3.8, !=3.9.7"
+files = [
+    {file = "streamlit-1.28.0-py2.py3-none-any.whl", hash = "sha256:6827f14fe4a2658851b25de70ccf5e4aa25650a029ba4f0a9cc6fc2ba2a1b97d"},
+    {file = "streamlit-1.28.0.tar.gz", hash = "sha256:be6fd240e290be2a79857b1ad7822b53a3c90f15cf6ce97d89ebf4d802d7edb1"},
+]
+
+[package.dependencies]
+altair = ">=4.0,<6"
+blinker = ">=1.0.0,<2"
+cachetools = ">=4.0,<6"
+click = ">=7.0,<9"
+gitpython = ">=3.0.7,<3.1.19 || >3.1.19,<4"
+importlib-metadata = ">=1.4,<7"
+numpy = ">=1.19.3,<2"
+packaging = ">=16.8,<24"
+pandas = ">=1.3.0,<3"
+pillow = ">=7.1.0,<11"
+protobuf = ">=3.20,<5"
+pyarrow = ">=6.0"
+pydeck = ">=0.8.0b4,<1"
+python-dateutil = ">=2.7.3,<3"
+requests = ">=2.27,<3"
+rich = ">=10.14.0,<14"
+tenacity = ">=8.1.0,<9"
+toml = ">=0.10.1,<2"
+tornado = ">=6.0.3,<7"
+typing-extensions = ">=4.3.0,<5"
+tzlocal = ">=1.1,<6"
+validators = ">=0.2,<1"
+watchdog = {version = ">=2.1.5", markers = "platform_system != \"Darwin\""}
+
+[package.extras]
+snowflake = ["snowflake-connector-python (>=2.8.0)", "snowflake-snowpark-python (>=0.9.0)"]
+
+[[package]]
 name = "tabulate"
 version = "0.9.0"
 description = "Pretty-print tabular data"
@@ -2316,4 +2355,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c04976407c5b9e6cc9071b6994a9445af300c3796d48b4f556bed11303fa79db"
+content-hash = "153f4b20ff32e040c58bab05db914e866734c67bf6b0d05b96ae3679e04c7723"
