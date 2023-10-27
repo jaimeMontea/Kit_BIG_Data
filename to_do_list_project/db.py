@@ -34,7 +34,7 @@ class SQLiteDB:
         current_dir = os.path.dirname(__file__)
         parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
-        if db_name == ":memory:":
+        if db_name == ":memory:" or db_name == "file::memory:?cache=shared":
             self.db_name = db_name
         else:
             self.db_name = os.path.join(parent_dir, db_name)
@@ -69,7 +69,7 @@ class SQLiteDB:
     def connect(self) -> None:
         """Connect to the data base."""
         try:
-            self.conn = sqlite3.connect(self.db_name)
+            self.conn = sqlite3.connect(self.db_name, uri=True)
             self.logger.info(f"Connected to database: {self.db_name}")
         except sqlite3.Error as e:
             self.logger.error(f"Error connecting to database: {e}")

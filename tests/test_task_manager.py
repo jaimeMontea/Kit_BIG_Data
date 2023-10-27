@@ -7,14 +7,16 @@ This script is dedicated to test all the functionalities from db.py file.
 from datetime import datetime, timedelta
 import pytest
 
-from to_do_list_project.db import SQLiteDB
 from to_do_list_project.task_manager import TaskManager, TaskStatus
 
 
 @pytest.fixture
 def task_manager() -> TaskManager:
     """Fixture to create and return a new TaskManager instance."""
-    return TaskManager(":memory:")
+    task_manager = TaskManager("file::memory:?cache=shared")
+    task_manager._db.connect()
+    yield task_manager
+    task_manager._db.close_connection()
 
 
 def test_add_task(task_manager: TaskManager) -> None:
@@ -48,12 +50,12 @@ def test_delete_task(task_manager: TaskManager) -> None:
     Test if a task can be successfully deleted from the task manager.
     """
     due_date = datetime.now() + timedelta(days=1)
-    result = task_manager.add_task(
+    task_id = task_manager.add_task(
         "Test Task", "Description", due_date, ["Edouard"]
     )
     assert len(task_manager._tasks) == 1
-    task_manager.remove_task(result)
-    assert not task_manager._tasks
+    task_manager.remove_task(task_id)
+    assert len(task_manager._tasks) == 0
 
 
 def test_complete_task(task_manager: TaskManager) -> None:
