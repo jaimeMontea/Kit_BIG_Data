@@ -58,7 +58,9 @@ task_4 = Mock(
         "name": "Buy",
         "description": "Buy lunch",
         "creation_date": "2023/11/13 10:00:00",
-        "due_date": datetime.strptime("2023-12-13 10:00:00", "%Y-%m-%d %H:%M:%S"),
+        "due_date": datetime.strptime(
+            "2023-12-13 10:00:00", "%Y-%m-%d %H:%M:%S"
+        ),
         "assignee": "John",
         "status": "In Progress",
         "priority": "Medium",

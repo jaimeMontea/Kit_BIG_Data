@@ -77,6 +77,7 @@ class TaskData(TypedDict):
     priority: TaskPriority
     categories: List[str]
 
+
 class Task:
     """
     Represents a Task object.

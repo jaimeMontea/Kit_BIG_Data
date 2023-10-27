@@ -17,7 +17,7 @@ import os
 import sqlite3
 from typing import List, Type, Union
 
-from .task import Task, TaskData, TaskStatus
+from .task import TaskData, TaskStatus
 
 
 class SQLiteDB:
@@ -148,7 +148,9 @@ class SQLiteDB:
             assignee = ", ".join(data["assignee"])
             status = data["status"].value
             priority = data["priority"].value
-            category = "" if not data["categories"] else " ".join(data["categories"])
+            category = (
+                "" if not data["categories"] else " ".join(data["categories"])
+            )
 
             cursor.execute(
                 insert_sql,
