@@ -9,40 +9,50 @@ modify, and view tasks.
 from datetime import datetime
 import logging
 import os
-from typing import Callable, Tuple, Union
+from typing import Callable, Tuple, Type, Union
+
+from tabulate import tabulate
 
 from .task import TaskPriority
 from .task_manager import TaskManager
 from .task_manager import TaskNotFoundError
 
+def setup_logger(log_file: str) -> Type[logging.Logger]:
+    """
+        Set up a logger to write all user actions.
 
-logger = logging.getLogger("Task Manager")
+        Args:
+            log_file (str): path where the log file is stored.
 
+        Returns:
+            Type[logging.Logger]: Logger object.
+    """
+    logger = logging.getLogger("user_input")
+    if not logger.handlers:
+        logger.setLevel(logging.INFO)
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
 
-def setup_logging() -> None:
-    """Set up logging configurations."""
-    current_dir = os.path.dirname(__file__)
-    parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
-    log_file = os.path.join(parent_dir, "logs", "user_input.log")
+    return logger
 
-    os.makedirs(os.path.join(parent_dir, "logs"), exist_ok=True)
-
-    file_handler = logging.FileHandler(log_file)
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-
+current_dir = os.path.dirname(__file__)
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+logger = setup_logger(os.path.join(parent_dir, "logs", "user_input.log"))
 
 def validate_date(date_str: str) -> Tuple[bool, str]:
     """Validate a date string and return a datetime object if valid."""
     try:
-        due_date = datetime.strptime(date_str, "%d-%m-%Y")
+        due_date = datetime.strptime(date_str, "%Y/%m/%d")
         if due_date.date() < datetime.now().date():
+            logger.error(f"Wrong date format. Due date must be after present time.")
             return False, "Due date must be in the future."
         return True, due_date
     except ValueError:
+        logger.error(f"Wrong date format. Input data not corresponging to format YYYY/MM/DD.")
         return False, "Invalid date format."
 
 
@@ -53,6 +63,7 @@ def validate_priority(
     try:
         return True, TaskPriority[priority_str.upper()]
     except KeyError:
+        logger.error(f"Invalid priority value. Not found in default values: LOW, MEDIUM or HIGH.")
         return False, "Invalid priority value. Use LOW, MEDIUM, or HIGH."
 
 
@@ -73,6 +84,7 @@ def get_input(
     """
     while True:
         user_input = input(prompt)
+        logger.info(f"Prompt: {prompt}, User input: {user_input}")
         is_valid, value = validator_func(user_input)
         if is_valid:
             return value
@@ -89,12 +101,12 @@ def add_task(task_manager: TaskManager) -> None:
         "Enter task description: ",
         lambda x: (bool(x), x if x else "Task description cannot be empty."),
     )
-    due_date = get_input("Enter due date (DD-MM-YYYY): ", validate_date)
+    due_date = get_input("Enter due date (YYYY/MM/DD): ", validate_date)
     assignees = get_input(
         "Enter assignees (comma separated): ",
         lambda x: (
             bool(x.split(",")),
-            x.split(",") if x else "Assignees list cannot be empty.",
+            x.split(",") if x else "No Assignee",
         ),
     )
     priority = get_input(
@@ -104,7 +116,7 @@ def add_task(task_manager: TaskManager) -> None:
         "Enter task categories (comma separated): ",
         lambda x: (
             bool(x.split(",")),
-            x.split(",") if x else "Categories list cannot be empty.",
+            x.split(",") if x else "No category",
         ),
     )
 
@@ -118,8 +130,6 @@ def add_task(task_manager: TaskManager) -> None:
     )
     if result is None:
         print(f"Task '{name}' added successfully.")
-    else:
-        print(result)
 
 
 def remove_task(task_manager: TaskManager) -> None:
@@ -133,6 +143,7 @@ def remove_task(task_manager: TaskManager) -> None:
     try:
         task_manager.remove_task(task_id)
         print("Task removed successfully.")
+        logger.info("Task with ID {task_id} was removed.")
     except TaskNotFoundError:
         print("Task with given ID not found.")
         logger.error("Task with given ID not found.")
@@ -144,12 +155,16 @@ def complete_task(task_manager: TaskManager) -> None:
         task_id = int(input("Enter the task ID to mark as completed: "))
         task_manager.complete_task(task_id)
         print(f"Task with ID {task_id} marked as complete.")
+        logger.info("Task with ID {task_id} marked as complete.")
     except TaskNotFoundError:
         print("Task with given ID not found.")
+        logger.error("Task with ID {task_id} not found.")
     except ValueError:
         print("Please enter a valid integer for task ID.")
+        logger.error("Task with ID {task_id} not a valid ID.")
     except Exception as e:
         print(f"An error occurred: {e}")
+        logger.error("An error occurred: {e}")
 
 
 def modify_task(task_manager) -> None:
@@ -166,6 +181,8 @@ def modify_task(task_manager) -> None:
 
     if task_id not in list_id:
         print("ID not found")
+        logger.error("Task with ID {task_id} not found.")
+        return 
 
     name = input("Enter new name[Press enter to not change]: ")
     description = input("Enter new description[Press enter to not change]: ")
@@ -188,21 +205,28 @@ def choice_validator(user_input: str) -> Tuple[bool, Union[str, int]]:
         choice = int(user_input)
         if choice >= 1 and choice <= 6:
             return True, choice
+        logger.error("Choice not between 1 and 6.")
         return False, "Please enter a number between 1 and 6."
     except ValueError:
+        logger.error("Input not a valid integer")
         return False, "Please enter a valid integer."
 
 
 def display_all_tasks(task_manager):
     """Display all tasks."""
-    all_tasks_with_ids = task_manager.get_all_tasks()
-    print(all_tasks_with_ids)
-
+    tasks = task_manager.get_all_tasks()
+    if tasks:
+        columns = ('id', 'name', 'description', 
+                'creation_date', 'due_date', 'assignee',
+                'status', 'priority', 'category')
+        print(tabulate([columns] + tasks, headers='firstrow', tablefmt='fancy_grid'))
+    else: 
+        print("No tasks.")
 
 def main():
     """Run the Task Manager app."""
-    setup_logging()
-    task_manager = TaskManager("tasks.db")
+
+    task_manager = TaskManager()
 
     while True:
         print("\n--- Task Manager ---")
