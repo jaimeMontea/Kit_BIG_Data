@@ -103,7 +103,7 @@ class SQLiteDB:
         else:
             return True
 
-    def create_table(self, table_name: str) -> None:
+    def create_table_task(self, table_name: str) -> None:
         """
         Create a table to initialize data base.
 
@@ -113,7 +113,7 @@ class SQLiteDB:
         try:
             self.connect()
             cursor = self.conn.cursor()
-            create_table_sql = self.generate_sql_creation_statement(table_name)
+            create_table_sql = self.generate_sql_creation_statement()
             cursor.execute(create_table_sql)
             self.conn.commit()
             self.logger.info(f"Table {table_name} created successfully")
@@ -135,7 +135,7 @@ class SQLiteDB:
         """
         table_in_data_base = self.table_exists(table_name)
         if not table_in_data_base:
-            self.create_table(table_name)
+            self.create_table_task()
         task_id = None
         try:
             self.connect()
@@ -253,7 +253,7 @@ class SQLiteDB:
             self.logger.info("Database connection closed")
 
     @staticmethod
-    def generate_sql_creation_statement(table_name: str) -> str:
+    def generate_sql_creation_statement() -> str:
         """
         Generate the sql statement to create a table.
 
@@ -263,8 +263,7 @@ class SQLiteDB:
         Returns:
             str: SQL statement.
         """
-        if table_name == "tasks":
-            create_table_sql = """
+        create_table_sql = """
                                     CREATE TABLE tasks (
                                         id INTEGER PRIMARY KEY,
                                         name TEXT,
@@ -272,18 +271,12 @@ class SQLiteDB:
                                         creation_date DATETIME,
                                         due_date DATETIME,
                                         assignee TEXT,
-                                        status TEXT,
-                                        priority TEXT,
+                                        status INTEGER,
+                                        priority INTEGER,
                                         category TEXT
                                         )
                                                             """
-        else:
-            create_table_sql = """
-                                    CREATE TABLE task_managers (
-                                        id INTEGER PRIMARY KEY,
-                                        task INTEGER
-                                        )
-                                                            """
+
         return create_table_sql
 
     @staticmethod
