@@ -3,14 +3,14 @@ task.py.
 
 This script provides utilities and classes to create,
 modify, and manage tasks.Tasks can have various attributes
-such as name, description, due date, assignees, status,
+such as id, name, description, due date, assignees, status,
 priority, and categories.
 """
 
 from datetime import datetime
 from enum import Enum, unique
 import re
-from typing import Union
+from typing import List, TypedDict, Union
 
 
 def parse_date(date_string: str) -> datetime:
@@ -65,6 +65,18 @@ class TaskPriority(Enum):
         return self.name.title()
 
 
+class TaskData(TypedDict):
+    """A dictionary representing the data structure of a Task."""
+
+    name: str
+    description: str
+    due_date: datetime
+    creation_date: datetime
+    assignee: List[str]
+    status: TaskStatus
+    priority: TaskPriority
+    categories: List[str]
+
 class Task:
     """
     Represents a Task object.
@@ -74,6 +86,7 @@ class Task:
 
     def __init__(
         self,
+        id: int,
         name: str,
         description: str,
         due_date: Union[datetime, str],
@@ -102,6 +115,7 @@ class Task:
         if categories is None:
             categories = []
 
+        self.id = id
         self.name = name
         self.description = description
         self.creation_date = datetime.now()
@@ -119,6 +133,17 @@ class Task:
         self.status = status
         self.priority = priority
         self._categories = categories
+
+    @property
+    def id(self) -> int:
+        """Getter for the task's id."""
+        return self._id
+
+    @id.setter
+    def id(self, new_id: int) -> None:
+        if not new_id:
+            raise ValueError("Id must be a non-empty integer")
+        self._id = new_id
 
     @property
     def name(self) -> str:

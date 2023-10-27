@@ -22,7 +22,7 @@ from datetime import datetime
 from typing import List
 
 from .db import SQLiteDB
-from .task import Task, TaskStatus, TaskPriority
+from .task import Task, TaskData, TaskStatus, TaskPriority
 
 
 class DatabaseConnectionError(Exception):
@@ -80,6 +80,7 @@ class TaskManager:
                         categories,
                     ) = task_tuple
                     task = Task(
+                        task_id,
                         name,
                         description,
                         datetime.strptime(due_date, "%Y-%m-%d %H:%M:%S"),
@@ -103,12 +104,30 @@ class TaskManager:
         categories: List[str] = None,
     ) -> int:
         """Add task to database."""
-        task = Task(
-            name, description, due_date, assignee, status, priority, categories
-        )
-        task_id = self._db.insert_data("tasks", task)
-        self._tasks.append(task)
+        task_data: TaskData = {
+            "name": name,
+            "description": description,
+            "creation_date": datetime.now(),
+            "due_date": due_date,
+            "assignee": assignee,
+            "status": status,
+            "priority": priority,
+            "categories": categories if categories is not None else []
+        }
 
+        task_id = self._db.insert_data("tasks", task_data)
+        task = Task(
+            task_id,
+            name,
+            description,
+            due_date,
+            assignee,
+            status,
+            priority,
+            categories
+        )
+        self._tasks.append(task)
+        print(len(self._tasks))
         print("Tasks after adding a new task:", self._tasks)
         return task_id
 
@@ -118,8 +137,9 @@ class TaskManager:
 
         self._db.remove_task(task_id)
 
-        if task_id in self._tasks:
-            del self._tasks[task_id]
+        for index, task in enumerate(self._tasks):
+            if task.id == task_id:
+                del self._tasks[index]
 
         print(f"Tasks after removal: {self._tasks}")
 

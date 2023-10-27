@@ -52,11 +52,18 @@ task_3 = Mock(
     }
 )
 
-task_4 = Task(
-    "Buy",
-    "Buy lunch",
-    datetime.strptime("2023-12-13 10:00:00", "%Y-%m-%d %H:%M:%S"),
-    "John",
+task_4 = Mock(
+    return_value={
+        "id": 3,
+        "name": "Buy",
+        "description": "Buy lunch",
+        "creation_date": "2023/11/13 10:00:00",
+        "due_date": datetime.strptime("2023-12-13 10:00:00", "%Y-%m-%d %H:%M:%S"),
+        "assignee": "John",
+        "status": "In Progress",
+        "priority": "Medium",
+        "category": "House",
+    }
 )
 
 # @pytest.fixture

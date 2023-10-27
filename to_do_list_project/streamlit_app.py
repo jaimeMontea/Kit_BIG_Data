@@ -6,10 +6,11 @@ It drives the UI of the Task Manager application using the
 Streamlit framework.
 """
 
+from datetime import datetime
 import streamlit as st
 
 from .db import SQLiteDB
-from .task import Task, TaskStatus, TaskPriority
+from .task import TaskData, TaskStatus, TaskPriority
 
 database = SQLiteDB("tasks.db")
 
@@ -57,15 +58,16 @@ def main() -> None:
         task_categories = st.text_input("Categories (comma-separated)")
 
         if st.button("Submit"):
-            new_task = Task(
-                name=task_name,
-                description=task_description,
-                due_date=task_due_date,
-                assignee=[task_assignee],
-                status=TaskStatus(task_status),
-                priority=TaskPriority(task_priority),
-                categories=task_categories.split(","),
-            )
+            new_task: TaskData = {
+                "name": task_name,
+                "description": task_description,
+                "creation_date": datetime.now(),
+                "due_date": task_due_date,
+                "assignee": [task_assignee],
+                "status": TaskStatus(task_status),
+                "priority": TaskPriority(task_priority),
+                "categories": task_categories.split(",")
+            }
             database.insert_data("tasks", new_task)
             st.success("Task created successfully!")
 

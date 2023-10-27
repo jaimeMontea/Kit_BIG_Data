@@ -42,7 +42,7 @@ def test_task_initialization() -> None:
     """
     due_date = datetime.now() + timedelta(days=1)
     assignee = ["Edouard"]
-    task = Task("Dish", "Wash the dishes after dinner", due_date, assignee)
+    task = Task(1, "Dish", "Wash the dishes after dinner", due_date, assignee)
     assert task.name == "Dish"
     assert task.description == "Wash the dishes after dinner"
     assert task.creation_date == datetime.now()
@@ -59,7 +59,7 @@ def test_task_modification() -> None:
     """
     due_date = datetime.now() + timedelta(days=1)
     assignee = ["Edouard"]
-    task = Task("Dish", "Wash the dishes after dinner", due_date, assignee)
+    task = Task(1, "Dish", "Wash the dishes after dinner", due_date, assignee)
     task.name = "laundry"
     assert task.name == "laundry"
     task.description = "Do the laundry"
@@ -84,11 +84,11 @@ def test_invalid_task_name() -> None:
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("", "Wash the dishes after dinner", due_date, assignee)
+        task = Task(1, "", "Wash the dishes after dinner", due_date, assignee)
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "Wash the dishes after dinner", due_date, assignee)
+        task = Task(2, "Dish", "Wash the dishes after dinner", due_date, assignee)
         task.name = ""
 
 
@@ -100,11 +100,11 @@ def test_invalid_task_desciption() -> None:
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "", due_date, assignee)
+        task = Task(1, "Dish", "", due_date, assignee)
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "Wash the dishes after dinner", due_date, assignee)
+        task = Task(2, "Dish", "Wash the dishes after dinner", due_date, assignee)
         task.description = ""
 
 
@@ -116,11 +116,11 @@ def test_invalid_task_due_date() -> None:
     with pytest.raises(ValueError):
         due_date = datetime.now() - timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "Wash the dishes after dinner", due_date, assignee)
+        task = Task(1, "Dish", "Wash the dishes after dinner", due_date, assignee)
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "Wash the dishes after dinner", due_date, assignee)
+        task = Task(2, "Dish", "Wash the dishes after dinner", due_date, assignee)
         task.due_date = datetime.now() - timedelta(days=1)
 
 
@@ -132,11 +132,11 @@ def test_invalid_task_assignee() -> None:
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard", 1]
-        task = Task("Dish", "Wash the dishes after dinner", due_date, assignee)
+        task = Task(1, "Dish", "Wash the dishes after dinner", due_date, assignee)
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "Wash the dishes after dinner", due_date, assignee)
+        task = Task(2, "Dish", "Wash the dishes after dinner", due_date, assignee)
         task.assignee = ["Edouard", 1]
 
 
@@ -149,6 +149,7 @@ def test_invalid_task_status() -> None:
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
         task = Task(
+            1,
             "Dish",
             "Wash the dishes after dinner",
             due_date,
@@ -158,7 +159,7 @@ def test_invalid_task_status() -> None:
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "Wash the dishes after dinner", due_date, assignee)
+        task = Task(2, "Dish", "Wash the dishes after dinner", due_date, assignee)
         task.status = "In Progress"
 
 
@@ -171,6 +172,7 @@ def test_invalid_task_priority() -> None:
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
         task = Task(
+            1,
             "Dish",
             "Wash the dishes after dinner",
             due_date,
@@ -180,7 +182,7 @@ def test_invalid_task_priority() -> None:
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "Wash the dishes after dinner", due_date, assignee)
+        task = Task(1, "Dish", "Wash the dishes after dinner", due_date, assignee)
         task.priority = "Medium"
 
 
@@ -193,6 +195,7 @@ def test_invalid_task_categories() -> None:
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
         task = Task(
+            1,
             "Dish",
             "Wash the dishes after dinner",
             due_date,
@@ -202,5 +205,5 @@ def test_invalid_task_categories() -> None:
     with pytest.raises(ValueError):
         due_date = datetime.now() + timedelta(days=1)
         assignee = ["Edouard"]
-        task = Task("Dish", "Wash the dishes after dinner", due_date, assignee)
+        task = Task(1, "Dish", "Wash the dishes after dinner", due_date, assignee)
         task.categories = ["Cleaning", 1]

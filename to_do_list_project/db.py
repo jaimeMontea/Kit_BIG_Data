@@ -15,9 +15,9 @@ removing, and updating tasks, among others.
 import logging
 import os
 import sqlite3
-from typing import List, Type
+from typing import List, Type, Union
 
-from .task import Task, TaskStatus
+from .task import Task, TaskData, TaskStatus
 
 
 class SQLiteDB:
@@ -122,7 +122,7 @@ class SQLiteDB:
         finally:
             self.close_connection()
 
-    def insert_data(self, table_name: str, data: Type[Task]) -> Type[Task]:
+    def insert_data(self, table_name: str, data: TaskData) -> Union[int, None]:
         """
         Insert new data in table.
 
@@ -141,14 +141,14 @@ class SQLiteDB:
             self.connect()
             cursor = self.conn.cursor()
             insert_sql = self.generate_sql_insert_statement(table_name)
-            name = data.name
-            description = data.description
-            creation_date = data.creation_date.strftime("%Y/%m/%d %H:%M:%S")
-            due_date = data.due_date.strftime("%Y/%m/%d %H:%M:%S")
-            assignee = ", ".join(data.assignee)
-            status = data.status.value
-            priority = data.priority.value
-            category = "" if not data.categories else " ".join(data.categories)
+            name = data["name"]
+            description = data["description"]
+            creation_date = data["creation_date"].strftime("%Y/%m/%d %H:%M:%S")
+            due_date = data["due_date"].strftime("%Y/%m/%d %H:%M:%S")
+            assignee = ", ".join(data["assignee"])
+            status = data["status"].value
+            priority = data["priority"].value
+            category = "" if not data["categories"] else " ".join(data["categories"])
 
             cursor.execute(
                 insert_sql,
@@ -170,7 +170,7 @@ class SQLiteDB:
             self.logger.error(f"Error inserting data: {e}")
         finally:
             self.close_connection()
-            return task_id
+        return task_id
 
     def fetch_data(
         self, task_id: int, to_do: str = "COMPLETE", task=None

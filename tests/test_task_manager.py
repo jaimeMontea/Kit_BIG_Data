@@ -20,21 +20,16 @@ def task_manager() -> TaskManager:
 
 
 def test_add_task(task_manager: TaskManager) -> None:
-    """
-    Test if a task can be successfully added to the task manager.
-    """
+    """Test if a task can be added to the task manager."""
     due_date = datetime.now() + timedelta(days=1)
-    result = task_manager.add_task(
+    task_manager.add_task(
         "Test Task", "Description", due_date, ["Edouard"]
     )
-    assert result is None
     assert len(task_manager._tasks) == 1
 
 
 def test_add_task_past_due_date(task_manager: TaskManager) -> None:
-    """
-    Test if a task with a past due date raises the appropriate error.
-    """
+    """Test if a task with a past due date raises the godd error."""
     due_date = datetime.now() - timedelta(days=1)
 
     with pytest.raises(ValueError, match="Due date must be a future date"):
@@ -46,9 +41,7 @@ def test_add_task_past_due_date(task_manager: TaskManager) -> None:
 
 
 def test_delete_task(task_manager: TaskManager) -> None:
-    """
-    Test if a task can be successfully deleted from the task manager.
-    """
+    """Test if a task can be deleted from the task manager."""
     due_date = datetime.now() + timedelta(days=1)
     task_id = task_manager.add_task(
         "Test Task", "Description", due_date, ["Edouard"]
@@ -59,9 +52,7 @@ def test_delete_task(task_manager: TaskManager) -> None:
 
 
 def test_complete_task(task_manager: TaskManager) -> None:
-    """
-    Test if a task can be marked as complete in the task manager.
-    """
+    """Test if a task can be marked as complete."""
     due_date = datetime.now() + timedelta(days=1)
     task_manager.add_task(
         "Test Task", "Description", due_date, ["user@example.com"]
@@ -124,9 +115,7 @@ def test_send_notification_invalid_email(task_manager: TaskManager) -> None:
 
 
 def test_get_all_tasks(task_manager: TaskManager) -> None:
-    """
-    Test if all tasks can be successfully retrieved from the task manager.
-    """
+    """Test if all tasks can be retrieved from the task manager."""
     due_date = datetime.now() + timedelta(days=1)
     task_manager.add_task(
         "Test Task", "Description", due_date, ["user@example.com"]
