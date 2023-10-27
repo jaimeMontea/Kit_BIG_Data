@@ -43,8 +43,8 @@ def db_manager() -> SQLiteDB:
 
 def test_table_creation_and_existence(db_manager: SQLiteDB) -> None:
     """Test if a table can be added to the db."""
-    table_name = "test_table"
+    table_name = "tasks"
 
     assert not db_manager.table_exists(table_name)
-    db_manager.create_table()
-    assert db_manager.table_exists("tasks")
+    db_manager.create_table_tasks()
+    assert db_manager.table_exists(table_name)

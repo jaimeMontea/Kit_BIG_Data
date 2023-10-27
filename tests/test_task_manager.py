@@ -6,15 +6,27 @@ This script is dedicated to test all the functionalities from db.py file.
 
 from datetime import datetime, timedelta
 import sqlite3
+from unittest.mock import Mock, patch
 import pytest
 
+from to_do_list_project.db import SQLiteDB
 from to_do_list_project.task_manager import TaskManager, TaskStatus
 
+@pytest.fixture
+def mock_db() -> None:
+    """
+    Pytest fixture that mocks the 'connect' method of the SQLiteDB class.
+    """
+    with patch.object(
+        SQLiteDB, "connect", return_value=Mock()
+    ) as mock_connect:
+        yield mock_connect
 
 @pytest.fixture
 def task_manager() -> TaskManager:
     """Fixture to create and return a new TaskManager instance."""
-    task_manager = TaskManager("file::memory:?cache=shared")
+    task_manager = TaskManager()
+    task_manager._db = SQLiteDB("file::memory:?cache=shared")
     conn = sqlite3.connect("file::memory:?cache=shared", uri=True)
     yield task_manager
     conn.close()

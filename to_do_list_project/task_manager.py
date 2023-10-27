@@ -68,8 +68,10 @@ class TaskManager:
                     categories,
                 ) = task_tuple
 
-                status = [c_status for c_status in TaskStatus if c_status.value == status][0]
-                priority = [c_priority for c_priority in TaskPriority if c_priority.value == priority][0]
+                status = [
+                    c_status for c_status in TaskStatus if c_status.value == status][0]
+                priority = [
+                    c_priority for c_priority in TaskPriority if c_priority.value == priority][0]
                 task = Task(
                     task_id,
                     name,
@@ -146,6 +148,12 @@ class TaskManager:
         """Get all the tasks of database."""
         return self._db.get_all_tasks()
 
+    def get_task_by_id(self, task_id: int) -> Task:
+        """List all the tasks of database."""
+        for task in self._tasks:
+            if task.id == task_id:
+                return task
+        raise TaskNotFoundError("Task not found.")
 
     def modify_task(
         self,

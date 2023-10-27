@@ -102,7 +102,7 @@ class SQLiteDB:
             return False
         return True
 
-    def create_table_task(self, table_name: str) -> None:
+    def create_table_tasks(self) -> None:
         """
         Create a table to initialize data base.
 
@@ -115,7 +115,7 @@ class SQLiteDB:
             create_table_sql = self.generate_sql_creation_statement()
             cursor.execute(create_table_sql)
             self.conn.commit()
-            self.logger.info(f"Table {table_name} created successfully")
+            self.logger.info(f"Table tasks created successfully")
         except sqlite3.Error as e:
             self.logger.error(f"Error creating table: {e}")
         finally:
@@ -134,7 +134,7 @@ class SQLiteDB:
         """
         table_in_data_base = self.table_exists(table_name)
         if not table_in_data_base:
-            self.create_table_task()
+            self.create_table_tasks()
         task_id = None
         try:
             self.connect()
@@ -240,7 +240,7 @@ class SQLiteDB:
             cursor.execute("SELECT * FROM tasks")
             data = cursor.fetchall()
         except sqlite3.Error as e:
-            self.logger(f"Error getting all tasks: {e}")
+            self.logger.error(f"Error getting all tasks: {e}")
         finally:
             self.close_connection()
         return data
