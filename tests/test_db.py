@@ -67,7 +67,7 @@ def test_insert_data(db_manager: SQLiteDB):
         "assignee": ["John Doe"],
         "status": TaskStatus.IN_PROGRESS,
         "priority": TaskPriority.MEDIUM,
-        "categories": ["Work", "Important"]
+        "categories": ["Work", "Important"],
     }
 
     task_id = db_manager.insert_data(table_name, sample_task)
@@ -94,7 +94,7 @@ def test_remove_task(db_manager: SQLiteDB):
         "assignee": ["John Doe"],
         "status": TaskStatus.IN_PROGRESS,
         "priority": TaskPriority.MEDIUM,
-        "categories": ["Work", "Important"]
+        "categories": ["Work", "Important"],
     }
 
     task_id = db_manager.insert_data(table_name, sample_task)

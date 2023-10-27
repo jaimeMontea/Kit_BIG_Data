@@ -24,9 +24,7 @@ def task_manager() -> TaskManager:
 def test_add_task(task_manager: TaskManager) -> None:
     """Test if a task can be added to the task manager."""
     due_date = datetime.now() + timedelta(days=1)
-    task_manager.add_task(
-        "Test Task", "Description", due_date, ["Edouard"]
-    )
+    task_manager.add_task("Test Task", "Description", due_date, ["Edouard"])
     assert len(task_manager._tasks) == 1
 
 
@@ -59,8 +57,9 @@ def test_complete_task(task_manager: TaskManager) -> None:
     task_id = task_manager.add_task(
         "Test Task",
         "Description",
-        due_date, ["user@example.com"],
-        TaskStatus.IN_PROGRESS
+        due_date,
+        ["user@example.com"],
+        TaskStatus.IN_PROGRESS,
     )
     task_manager.complete_task(task_id)
     assert task_manager.get_task_by_id(task_id).status == TaskStatus.COMPLETE
@@ -76,11 +75,7 @@ def test_modify_task(task_manager: TaskManager) -> None:
         "Test Task", "Description", due_date, ["user@example.com"]
     )
     task_manager.modify_task(
-        task_id,
-        "Modified Task",
-        "Description",
-        due_date,
-        ["user@example.com"]
+        task_id, "Modified Task", "Description", due_date, ["user@example.com"]
     )
     assert task_manager.get_task_by_id(task_id).name == "Modified Task"
 
