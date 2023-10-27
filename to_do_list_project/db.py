@@ -34,7 +34,7 @@ class SQLiteDB:
         current_dir = os.path.dirname(__file__)
         parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
-        if db_name == ":memory:" or db_name == "file::memory:?cache=shared":
+        if db_name == "file::memory:?cache=shared":
             self.db_name = db_name
         else:
             self.db_name = os.path.join(parent_dir, db_name)
@@ -244,7 +244,7 @@ class SQLiteDB:
             self.logger(f"Error getting all tasks: {e}")
         finally:
             self.close_connection()
-            return data
+        return data
 
     def close_connection(self) -> None:
         """Close connection of data base."""

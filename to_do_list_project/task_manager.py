@@ -127,7 +127,6 @@ class TaskManager:
             categories
         )
         self._tasks.append(task)
-        print(len(self._tasks))
         print("Tasks after adding a new task:", self._tasks)
         return task_id
 
@@ -151,6 +150,7 @@ class TaskManager:
             TaskNotFoundError: If the task is not found.
         """
         self._db.fetch_data(task_id, to_do="COMPLETE")
+        self.get_task_by_id(task_id).status = TaskStatus.COMPLETE
 
     def list_all_tasks(self) -> List[Task]:
         """List all the tasks of database."""
@@ -210,5 +210,10 @@ class TaskManager:
             assignee = new_assignee
 
         data = name, description, due_date, assignee
-
         self._db.fetch_data(task_id, to_do="MODIFY", task=data)
+
+        task = self.get_task_by_id(task_id)
+        task.name = name
+        task.description = description
+        task.due_date = due_date
+        task.assignee = assignee

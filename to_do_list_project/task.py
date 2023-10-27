@@ -113,13 +113,17 @@ class Task:
         categories (list[str], optional): Categories the task belongs to.
         Default is None.
         """
-        if categories is None:
-            categories = []
-
         self.id = id
         self.name = name
         self.description = description
         self.creation_date = datetime.now()
+
+        if categories is None:
+            categories = []
+
+        for category in categories:
+            if not isinstance(category, str):
+                raise ValueError(f"Invalid type of category")
 
         # Ensure that due_date is always in 'DD-MM-YYYY' format
         if isinstance(due_date, str):
