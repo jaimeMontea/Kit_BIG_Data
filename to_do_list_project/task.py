@@ -123,7 +123,7 @@ class Task:
 
         for category in categories:
             if not isinstance(category, str):
-                raise ValueError(f"Invalid type of category")
+                raise ValueError("Invalid type of category")
 
         # Ensure that due_date is always in 'DD-MM-YYYY' format
         if isinstance(due_date, str):

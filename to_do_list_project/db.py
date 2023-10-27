@@ -100,8 +100,7 @@ class SQLiteDB:
 
         if response is None:
             return False
-        else:
-            return True
+        return True
 
     def create_table(self, table_name: str) -> None:
         """
