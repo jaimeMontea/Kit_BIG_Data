@@ -17,6 +17,7 @@ from .task import TaskPriority
 from .task_manager import TaskManager
 from .task_manager import TaskNotFoundError
 
+
 def setup_logger(log_file: str) -> Type[logging.Logger]:
     """
         Set up a logger to write all user actions.
@@ -39,20 +40,24 @@ def setup_logger(log_file: str) -> Type[logging.Logger]:
 
     return logger
 
+
 current_dir = os.path.dirname(__file__)
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 logger = setup_logger(os.path.join(parent_dir, "logs", "user_input.log"))
+
 
 def validate_date(date_str: str) -> Tuple[bool, str]:
     """Validate a date string and return a datetime object if valid."""
     try:
         due_date = datetime.strptime(date_str, "%Y/%m/%d")
         if due_date.date() < datetime.now().date():
-            logger.error(f"Wrong date format. Due date must be after present time.")
+            logger.error(
+                f"Wrong date format. Due date must be after present time.")
             return False, "Due date must be in the future."
         return True, due_date
     except ValueError:
-        logger.error(f"Wrong date format. Input data not corresponging to format YYYY/MM/DD.")
+        logger.error(
+            f"Wrong date format. Input data not corresponging to format YYYY/MM/DD.")
         return False, "Invalid date format."
 
 
@@ -63,7 +68,8 @@ def validate_priority(
     try:
         return True, TaskPriority[priority_str.upper()]
     except KeyError:
-        logger.error(f"Invalid priority value. Not found in default values: LOW, MEDIUM or HIGH.")
+        logger.error(
+            f"Invalid priority value. Not found in default values: LOW, MEDIUM or HIGH.")
         return False, "Invalid priority value. Use LOW, MEDIUM, or HIGH."
 
 
@@ -120,7 +126,7 @@ def add_task(task_manager: TaskManager) -> None:
         ),
     )
 
-    result = task_manager.add_task(
+    task_manager.add_task(
         name,
         description,
         due_date,
@@ -128,8 +134,8 @@ def add_task(task_manager: TaskManager) -> None:
         priority=priority,
         categories=categories,
     )
-    if result is None:
-        print(f"Task '{name}' added successfully.")
+
+    print(f"Task '{name}' added successfully.")
 
 
 def remove_task(task_manager: TaskManager) -> None:
@@ -182,7 +188,7 @@ def modify_task(task_manager) -> None:
     if task_id not in list_id:
         print("ID not found")
         logger.error("Task with ID {task_id} not found.")
-        return 
+        return
 
     name = input("Enter new name[Press enter to not change]: ")
     description = input("Enter new description[Press enter to not change]: ")
@@ -216,12 +222,14 @@ def display_all_tasks(task_manager):
     """Display all tasks."""
     tasks = task_manager.get_all_tasks()
     if tasks:
-        columns = ('id', 'name', 'description', 
-                'creation_date', 'due_date', 'assignee',
-                'status', 'priority', 'category')
-        print(tabulate([columns] + tasks, headers='firstrow', tablefmt='fancy_grid'))
-    else: 
+        columns = ('id', 'name', 'description',
+                   'creation_date', 'due_date', 'assignee',
+                   'status', 'priority', 'category')
+        print(tabulate([columns] + tasks,
+              headers='firstrow', tablefmt='fancy_grid'))
+    else:
         print("No tasks.")
+
 
 def main():
     """Run the Task Manager app."""

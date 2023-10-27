@@ -17,7 +17,7 @@ Classes:
 """
 
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from .db import SQLiteDB
 from .task import Task, TaskData, TaskStatus, TaskPriority
@@ -36,7 +36,7 @@ class TaskManager:
     related to tasks.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, db: Optional[SQLiteDB] = None) -> None:
         """
         Initialize the TaskManager object.
 
@@ -47,7 +47,7 @@ class TaskManager:
             DatabaseConnectionError: If the database connection fails.
         """
 
-        self._db = SQLiteDB()
+        self._db = db or SQLiteDB()
         self._tasks = self.load_tasks_from_db()
 
     def load_tasks_from_db(self) -> List[Task]:
