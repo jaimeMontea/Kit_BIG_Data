@@ -69,9 +69,15 @@ class TaskManager:
                 ) = task_tuple
 
                 status = [
-                    c_status for c_status in TaskStatus if c_status.value == status][0]
+                    c_status
+                    for c_status in TaskStatus
+                    if c_status.value == status
+                ][0]
                 priority = [
-                    c_priority for c_priority in TaskPriority if c_priority.value == priority][0]
+                    c_priority
+                    for c_priority in TaskPriority
+                    if c_priority.value == priority
+                ][0]
                 task = Task(
                     task_id,
                     name,
@@ -104,7 +110,7 @@ class TaskManager:
             "assignee": assignee,
             "status": status,
             "priority": priority,
-            "categories": categories if categories is not None else []
+            "categories": categories if categories is not None else [],
         }
 
         task_id = self._db.insert_data("tasks", task_data)
@@ -116,7 +122,7 @@ class TaskManager:
             assignee,
             status,
             priority,
-            categories
+            categories,
         )
         self._tasks.append(task)
         print("Tasks after adding a new task:", self._tasks)

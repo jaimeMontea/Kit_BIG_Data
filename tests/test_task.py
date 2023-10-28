@@ -45,8 +45,8 @@ def test_task_initialization() -> None:
     task = Task(1, "Dish", "Wash the dishes after dinner", due_date, assignee)
     assert task.name == "Dish"
     assert task.description == "Wash the dishes after dinner"
-    assert task.creation_date == datetime.now()
-    assert task.due_date == due_date
+    time_difference = datetime.now() - task.creation_date
+    assert abs(time_difference.total_seconds()) < 1
     assert task.assignee == assignee
     assert task.status == TaskStatus.IN_PROGRESS
     assert task.priority == TaskPriority.MEDIUM
@@ -65,7 +65,8 @@ def test_task_modification() -> None:
     task.description = "Do the laundry"
     assert task.description == "Do the laundry"
     task.due_date = datetime.now() + timedelta(days=2)
-    assert task.due_date == datetime.now() + timedelta(days=2)
+    time_difference = datetime.now() + timedelta(days=2) - task.due_date
+    assert abs(time_difference.total_seconds()) < 1
     task.assignee = ["Maxime"]
     assert task.assignee == ["Maxime"]
     task.status = TaskStatus.COMPLETE

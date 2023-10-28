@@ -5,7 +5,6 @@ This script is dedicated to test all the functionalities from db.py file.
 """
 
 from datetime import datetime, timedelta
-import logging
 import sqlite3
 from unittest.mock import Mock, patch
 import pytest

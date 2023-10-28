@@ -52,13 +52,13 @@ def validate_date(date_str: str) -> Tuple[bool, str]:
         due_date = datetime.strptime(date_str, "%Y/%m/%d")
         if due_date.date() < datetime.now().date():
             logger.error(
-                f"Wrong date format. Due date must be after present time."
+                "Wrong date format. Due date must be after present time."
             )
             return False, "Due date must be in the future."
         return True, due_date
     except ValueError:
         logger.error(
-            f"Wrong date format. Input data not corresponging to format YYYY/MM/DD."
+            "Wrong date format. Input data  need this format YYYY/MM/DD."
         )
         return False, "Invalid date format."
 
@@ -71,7 +71,7 @@ def validate_priority(
         return True, TaskPriority[priority_str.upper()]
     except KeyError:
         logger.error(
-            f"Invalid priority value. Not found in default values: LOW, MEDIUM or HIGH."
+            "Invalid priority value. Should be: LOW, MEDIUM or HIGH."
         )
         return False, "Invalid priority value. Use LOW, MEDIUM, or HIGH."
 
@@ -247,7 +247,6 @@ def display_all_tasks(task_manager):
 
 def main():
     """Run the Task Manager app."""
-
     task_manager = TaskManager()
 
     while True:
