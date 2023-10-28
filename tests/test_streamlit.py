@@ -5,13 +5,15 @@ This script is dedicated to test all the functionalities
 from test_streamlit.py file, our graphical interface.
 """
 
+from datetime import datetime, timedelta
 from unittest.mock import patch
 
 from to_do_list_project.streamlit_app import main
+from to_do_list_project.task import TaskPriority, TaskStatus
 
 
 def test_display_home() -> None:
-    """Basic test for streamlit app's main function."""
+    """Test the main interface of the Task Manager for 'Home' option."""
     with patch(
         "to_do_list_project.streamlit_app.st.sidebar.selectbox",
         return_value="Home",
@@ -30,3 +32,123 @@ def test_display_home() -> None:
                 mock_write.assert_called_once_with(
                     "Navigate using the sidebar to manage tasks."
                 )
+
+
+def test_display_create_task() -> None:
+    """Test the main interface of the Task Manager for 'Create Task' option."""
+    with patch(
+        "to_do_list_project.streamlit_app.st.sidebar.selectbox",
+        return_value="Create Task",
+    ):
+        with patch(
+            "to_do_list_project.streamlit_app.st.subheader"
+        ) as mock_subheader:
+            with patch("to_do_list_project.streamlit_app.st.text_input"):
+                with patch("to_do_list_project.streamlit_app.st.text_area"):
+                    with patch(
+                        "to_do_list_project.streamlit_app.st.date_input"
+                    ):
+                        with patch(
+                            "to_do_list_project.streamlit_app.st.selectbox"
+                        ):
+                            main()
+
+                            mock_subheader.assert_called_once_with(
+                                "Create a New Task"
+                            )
+
+
+def test_display_task_created_successfully() -> None:
+    """
+    This test simulates the user selecting the 'Create Task' option from the sidebar,
+    filling out the task details, clicking the 'Submit' button,
+    and checks if the "Task created successfully" message is displayed.
+    """
+    with patch(
+        "to_do_list_project.streamlit_app.st.sidebar.selectbox",
+        return_value="Create Task",
+    ):
+        with patch(
+            "to_do_list_project.streamlit_app.st.text_input",
+            return_value="Sample Task",
+        ):
+            with patch(
+                "to_do_list_project.streamlit_app.st.text_area",
+                return_value="Sample Description",
+            ):
+                with patch(
+                    "to_do_list_project.streamlit_app.st.date_input",
+                    return_value=(datetime.now() + timedelta(days=1)).date(),
+                ):
+                    with patch(
+                        "to_do_list_project.streamlit_app.st.selectbox",
+                        side_effect=[
+                            TaskStatus.COMPLETE.value,
+                            TaskPriority.HIGH.value,
+                        ],
+                    ):
+                        with patch(
+                            "to_do_list_project.streamlit_app.st.button",
+                            return_value=True,
+                        ):
+                            with patch(
+                                "to_do_list_project.streamlit_app.database.insert_data"
+                            ):
+                                with patch(
+                                    "to_do_list_project.streamlit_app.st.success"
+                                ) as mock_success:
+                                    main()
+                                    mock_success.assert_called_once_with(
+                                        "Task created successfully!"
+                                    )
+
+
+def test_display_complete_task() -> None:
+    """
+    Test the main interface of the Task Manager for the 'Complete Task' option.
+    """
+    with patch(
+        "to_do_list_project.streamlit_app.st.sidebar.selectbox",
+        return_value="Complete Task",
+    ):
+        with patch(
+            "to_do_list_project.streamlit_app.st.subheader"
+        ) as mock_subheader:
+            with patch("to_do_list_project.streamlit_app.st.number_input"):
+                with patch("to_do_list_project.streamlit_app.st.button"):
+                    main()
+                    mock_subheader.assert_called_once_with(
+                        "Mark a Task as Complete"
+                    )
+
+
+def test_display_delete_task() -> None:
+    """
+    Test the main interface of the Task Manager for the 'Delete Task' option.
+    """
+    with patch(
+        "to_do_list_project.streamlit_app.st.sidebar.selectbox",
+        return_value="Delete Task",
+    ):
+        with patch(
+            "to_do_list_project.streamlit_app.st.subheader"
+        ) as mock_subheader:
+            with patch("to_do_list_project.streamlit_app.st.number_input"):
+                with patch("to_do_list_project.streamlit_app.st.button"):
+                    main()
+                    mock_subheader.assert_called_once_with("Delete a Task")
+
+
+def test_display_view_tasks() -> None:
+    """
+    Test the main interface of the Task Manager for the 'View Tasks' option.
+    """
+    with patch(
+        "to_do_list_project.streamlit_app.st.sidebar.selectbox",
+        return_value="View Tasks",
+    ):
+        with patch(
+            "to_do_list_project.streamlit_app.st.subheader"
+        ) as mock_subheader:
+            main()
+            mock_subheader.assert_called_once_with("Existing Tasks")

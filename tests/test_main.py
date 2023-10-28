@@ -44,10 +44,12 @@ def task_manager_with_tasks() -> [TaskManager, Any]:
     task_manager = TaskManager(SQLiteDB("file::memory:?cache=shared"))
     conn = sqlite3.connect("file::memory:?cache=shared", uri=True)
 
+    curent_date = datetime.now() + timedelta(days=1)
+
     task_manager.add_task(
         "Test Task",
         "Description",
-        datetime.now() + timedelta(days=1),
+        curent_date,
         ["user@example.com"],
         TaskStatus.IN_PROGRESS,
         TaskPriority.MEDIUM,
@@ -59,7 +61,7 @@ def task_manager_with_tasks() -> [TaskManager, Any]:
             1,
             "Test Task",
             "Description",
-            datetime.now() + timedelta(days=1),
+            curent_date,
             ["user@example.com"],
             TaskStatus.IN_PROGRESS,
             TaskPriority.MEDIUM,
@@ -165,6 +167,20 @@ def test_display_all_tasks_with_tasks(
     task_manager_with_tasks: [TaskManager, Any]
 ) -> None:
     """Test if display all tasks for user."""
+    formatted_tasks = []
+    for task in task_manager_with_tasks[1]:
+        formatted_task = (
+            task[0],
+            task[1],
+            task[2],
+            (datetime.now()).strftime("%Y/%m/%d %H:%M:%S"),
+            task[3].strftime("%Y/%m/%d %H:%M:%S"),
+            task[4][0],
+            task[5].value,
+            task[6].value,
+            task[7][0],
+        )
+        formatted_tasks.append(formatted_task)
 
     columns = (
         "id",
@@ -182,8 +198,12 @@ def test_display_all_tasks_with_tasks(
         "to_do_list_project.main.tabulate"
     ) as tabulate_mock:
         display_all_tasks(task_manager_with_tasks[0])
+
+    print("Actual call args to tabulate:", tabulate_mock.call_args)
+    print("Actual call args to tabulate:", [columns] + formatted_tasks)
+
     tabulate_mock.assert_any_call(
-        [columns] + task_manager_with_tasks[1],
+        [columns] + formatted_tasks,
         headers="firstrow",
         tablefmt="fancy_grid",
     )

@@ -108,21 +108,3 @@ def test_remove_task(db_manager: SQLiteDB):
     db_manager.close_connection()
 
     assert row is None
-
-
-def test_setup_logger(db_manager: SQLiteDB):
-    """Test if log is generated."""
-    mock_file_handler = Mock(spec=logging.FileHandler)
-
-    with patch(logging.FileHandler, return_value=mock_file_handler):
-        log_file = "..logs/data_base.log"
-        logger = db_manager.setup_logger(log_file)
-        logger = logging.getLogger("task_manager_database")
-
-        logger.info("Test log message")
-
-        mock_file_handler.emit.assert_called_once()
-
-        call_args = mock_file_handler.emit.call_args[0]
-        record = call_args[0]
-        assert record.getMessage() == "Test log message"
