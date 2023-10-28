@@ -93,7 +93,7 @@ cd docs
 make html
 ```
 
-3. Ouvrez le fichier docs/_build/html/index.html sur votre navigateur internet.
+3. Ouvrez le fichier **docs/_build/html/index.html** sur votre navigateur internet.
 
 ### Ouvrir l'interface graphique générée avec Streamlit :
 
