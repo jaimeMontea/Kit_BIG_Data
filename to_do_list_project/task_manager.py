@@ -119,7 +119,6 @@ class TaskManager:
             categories
         )
         self._tasks.append(task)
-        print("Tasks after adding a new task:", self._tasks)
         return task_id
 
     def remove_task(self, task_id: int) -> None:
@@ -183,8 +182,8 @@ class TaskManager:
             if task_id == task[0]:
                 name = tasks_list[index][1]
                 description = tasks_list[index][2]
-                due_date = tasks_list[index][3]
-                assignee = tasks_list[index][4]
+                due_date = tasks_list[index][4]
+                assignee = tasks_list[index][5]
 
         if new_name:
             name = new_name
@@ -195,7 +194,7 @@ class TaskManager:
         if new_assignee:
             assignee = new_assignee
 
-        data = name, description, due_date, assignee
+        data = name, description, due_date.strftime("%Y/%m/%d %H:%M:%S"), assignee
         self._db.fetch_data(task_id, to_do="MODIFY", task=data)
 
         task = self.get_task_by_id(task_id)
