@@ -6,9 +6,10 @@ This script is dedicated to test all the functionalities from main.py file.
 
 from datetime import datetime, timedelta
 import logging
+import os
 import sqlite3
 from typing import Any, Tuple, Union
-from unittest.mock import call, MagicMock, Mock, patch, ANY
+from unittest.mock import call, MagicMock, Mock, mock_open, patch, ANY
 import pytest
 
 from to_do_list_project.db import SQLiteDB
@@ -21,6 +22,7 @@ from to_do_list_project.main import (
     main,
     modify_task,
     remove_task,
+    setup_logger,
     validate_date,
     validate_priority,
 )
@@ -264,12 +266,59 @@ def test_validate_date_valid_future_date() -> None:
     assert response.date() == (datetime.now() + timedelta(days=5)).date()
 
 
+def test_validate_date_past_date():
+    """
+    Test that a past date string is correctly identified as invalid
+    and returns an appropriate error message.
+    """
+    past_date = (datetime.now() - timedelta(days=5)).strftime("%Y/%m/%d")
+    valid, response = validate_date(past_date)
+
+    assert not valid
+    assert response == "Due date must be in the future."
+
+
+def test_validate_date_invalid_format():
+    """
+    Test that an invalid date format is correctly identified and
+    returns an appropriate error message.
+    """
+    invalid_date = "2023/14/78"
+    valid, response = validate_date(invalid_date)
+
+    assert not valid
+    assert response == "Invalid date format."
+
+
 def test_validate_priority_valid_values() -> None:
     """Test that valid priority values are correctly identified."""
     for valid_priority in ["LOW", "MEDIUM", "HIGH", "low", "medium", "high"]:
         valid, response = validate_priority(valid_priority)
         assert valid
         assert response == TaskPriority[valid_priority.upper()]
+
+
+def test_validate_priority_invalid_values():
+    """
+    Test that invalid priority values are correctly identified
+    and return an appropriate error message.
+    """
+    for invalid_priority in ["L", "Med", "HIGHISH", "priority", "3"]:
+        valid, response = validate_priority(invalid_priority)
+
+        assert not valid
+        assert response == "Invalid priority value. Use LOW, MEDIUM, or HIGH."
+
+
+def test_validate_priority_empty_string():
+    """
+    Test that an empty string is correctly identified as an invalid priority
+    and returns an appropriate error message.
+    """
+    valid, response = validate_priority("")
+
+    assert not valid
+    assert response == "Invalid priority value. Use LOW, MEDIUM, or HIGH."
 
 
 class NoMoreInputs(Exception):
@@ -341,3 +390,36 @@ def test_get_input(
     captured = capsys.readouterr()
     assert captured.out == expected_output
     assert result == expected_return
+
+
+def test_setup_logger():
+    """
+    Test the setup_logger function without creating an actual file.
+    """
+    m = mock_open()
+    test_message = "Test log message."
+
+    logger = logging.getLogger("user_input")
+    for handler in logger.handlers[:]:
+        logger.removeHandler(handler)
+
+    with patch('builtins.open', m):
+        logger = setup_logger('fake_path.log')
+        logger.info(test_message)
+
+    assert m.called, "Expected 'open' to have been called"
+
+    write_calls = []
+    for name, args, _ in m.mock_calls:
+        if name == "().write":
+            write_calls.append(args[0])
+
+    print("Write calls:")
+    for call in write_calls:
+        print(call)
+
+    for call in write_calls:
+        if test_message in call:
+            break
+    else:
+        assert False, f"Expected '{test_message}' to be written to mock file"

@@ -46,7 +46,6 @@ class TaskManager:
         Raises:
             DatabaseConnectionError: If the database connection fails.
         """
-
         self._db = db or SQLiteDB()
         self._tasks = self.load_tasks_from_db()
 

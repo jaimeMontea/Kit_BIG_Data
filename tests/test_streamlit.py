@@ -93,10 +93,10 @@ def test_display_task_created_successfully() -> None:
                             return_value=True,
                         ):
                             with patch(
-                    "to_do_list_project.streamlit_app.database.insert_data"
+                                "to_do_list_project.streamlit_app.database.insert_data"  # noqa: E501
                             ):
                                 with patch(
-                                "to_do_list_project.streamlit_app.st.success"
+                                    "to_do_list_project.streamlit_app.st.success"  # noqa: E501
                                 ) as mock_success:
                                     main()
                                     mock_success.assert_called_once_with(
