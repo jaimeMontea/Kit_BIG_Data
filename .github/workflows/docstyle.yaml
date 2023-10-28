@@ -32,4 +32,4 @@ jobs:
       run: poetry install
 
     - name: Check docstrings with pydocstyle
-      run: poetry run pydocstyle to_do_list_project/ test/
+      run: poetry run pydocstyle to_do_list_project/ tests/

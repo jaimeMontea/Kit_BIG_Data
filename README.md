@@ -1,8 +1,8 @@
-# Kit_BIG_Data: Todo List Simple
+![task_manager_logo](https://github.com/jaimeMontea/Kit_BIG_Data/assets/45881846/b91f92a6-266d-433c-a075-cdb86ebf13ba)
 
 ## Présentation du Projet
 
-Ce projet est une simple todo list réalisée dans le cadre du mastère Intelligence Artificielle de Telecom Paris. Le principal objectif de ce projet est d'offrir une application simple et intuitive pour gérer des tâches.
+Ce projet porte sur la réalisation d'un __Task Manager__ réalisée dans le cadre du mastère __Intelligence Artificielle__ de Telecom Paris. Le principal objectif de ce travail est d'offrir une application simple et intuitive pour gérer des tâches.
 
 ## Configuration de l'environnement
 
@@ -78,15 +78,18 @@ cd Kit_BIG_Data
 
 2. **Lancez le projet**:
 ```
-python .\to_do_list_project\main.py
+python -m to_do_list_project.main
 ```
 
 ### Documentation générée avec Sphinx :
 Ouvrir le fichier docs/_build/html/index.html sur votre navigateur internet.
 
 ### Ouvrir l'interface graphique générée avec Streamlit :
-Dans .\to_do_list_project lancer $ streamlit run streamlit_app.py dans votre terminal.
 
+1. **Depuis la racine de votre projet**:
+```
+python -m streamlit run to_do_list_project/streamlit_app.py
+```
 ### Normes de codage
 
 Nous suivons le guide de style [PEP8](https://peps.python.org/pep-0008/) pour assurer la clarté et la lisibilité du code.

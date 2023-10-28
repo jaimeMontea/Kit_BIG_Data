@@ -31,4 +31,4 @@ jobs:
       run: poetry install --no-root
 
     - name: Run flake8
-      run: poetry run flake8 to_do_list_project/ test/
+      run: poetry run flake8 to_do_list_project/ tests/
