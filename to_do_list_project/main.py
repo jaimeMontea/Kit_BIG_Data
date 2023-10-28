@@ -194,8 +194,9 @@ def modify_task(task_manager) -> None:
 
     name = input("Enter new name[Press enter to not change]: ")
     description = input("Enter new description[Press enter to not change]: ")
-    due_date = input("Enter new due_date (YYYY/MM/DD)[Press enter to not change]: ")
-    
+    due_date = input(
+        "Enter new due_date (YYYY/MM/DD)[Press enter to not change]: "
+    )
 
     due_date = datetime.strptime(due_date, "%Y/%m/%d")
     assignee = input("Enter new assignee[Press enter to not change]: ")

@@ -285,20 +285,23 @@ def test_modify_task_calls_modify_task() -> None:
         )
     ]
 
+    expected_datetime = datetime.combine(
+        (datetime.now() + timedelta(days=5)).date(), datetime.min.time())
+
     with patch(
         "builtins.input",
         side_effect=[
             "1",
             "New Name",
             "New Description",
-            "New Date",
+            expected_datetime.strftime("%Y/%m/%d"),
             "New Assignee",
         ],
     ):
         modify_task(mock_task_manager)
 
     mock_task_manager.modify_task.assert_called_once_with(
-        1, "New Name", "New Description", "New Date", "New Assignee"
+        1, "New Name", "New Description", expected_datetime, "New Assignee"
     )
 
 

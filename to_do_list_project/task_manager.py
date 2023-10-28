@@ -199,7 +199,8 @@ class TaskManager:
         if new_assignee:
             assignee = new_assignee
 
-        data = name, description, due_date.strftime("%Y/%m/%d %H:%M:%S"), assignee
+        data = name, description, due_date.strftime(
+            "%Y/%m/%d %H:%M:%S"), assignee
         self._db.fetch_data(task_id, to_do="MODIFY", task=data)
 
         task = self.get_task_by_id(task_id)
