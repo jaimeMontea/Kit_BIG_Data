@@ -6,13 +6,27 @@ from test_streamlit.py file, our graphical interface.
 """
 
 from datetime import datetime, timedelta
+import sqlite3
 from unittest.mock import patch
 
+import pytest
+
+from to_do_list_project.db import SQLiteDB
 from to_do_list_project.streamlit_app import main
 from to_do_list_project.task import TaskPriority, TaskStatus
+from to_do_list_project.task_manager import TaskManager
 
 
-def test_display_home() -> None:
+@pytest.fixture
+def task_manager() -> TaskManager:
+    """Fixture to create and return a new TaskManager instance."""
+    task_manager = TaskManager(SQLiteDB("file::memory:?cache=shared"))
+    conn = sqlite3.connect("file::memory:?cache=shared", uri=True)
+    yield task_manager
+    conn.close()
+
+
+def test_display_home(task_manager: TaskManager) -> None:
     """Test the main interface of the Task Manager for 'Home' option."""
     with patch(
         "to_do_list_project.streamlit_app.st.sidebar.selectbox",
@@ -24,7 +38,7 @@ def test_display_home() -> None:
             with patch(
                 "to_do_list_project.streamlit_app.st.write"
             ) as mock_write:
-                main()
+                main(task_manager)
 
                 mock_subheader.assert_called_once_with(
                     "Welcome to Task Manager"
@@ -34,7 +48,7 @@ def test_display_home() -> None:
                 )
 
 
-def test_display_create_task() -> None:
+def test_display_create_task(task_manager: TaskManager) -> None:
     """Test the main interface of the Task Manager for 'Create Task' option."""
     with patch(
         "to_do_list_project.streamlit_app.st.sidebar.selectbox",
@@ -51,14 +65,14 @@ def test_display_create_task() -> None:
                         with patch(
                             "to_do_list_project.streamlit_app.st.selectbox"
                         ):
-                            main()
+                            main(task_manager)
 
                             mock_subheader.assert_called_once_with(
                                 "Create a New Task"
                             )
 
 
-def test_display_task_created_successfully() -> None:
+def test_display_task_created_successfully(task_manager: TaskManager) -> None:
     """
     This test simulates the user selecting the 'Create Task'
     option from the sidebar,filling out the task details,
@@ -92,19 +106,17 @@ def test_display_task_created_successfully() -> None:
                             "to_do_list_project.streamlit_app.st.button",
                             return_value=True,
                         ):
-                            with patch(
-                                "to_do_list_project.streamlit_app.database.insert_data"  # noqa: E501
-                            ):
+                            with patch.object(task_manager._db, "insert_data"):  # noqa: E501
                                 with patch(
                                     "to_do_list_project.streamlit_app.st.success"  # noqa: E501
                                 ) as mock_success:
-                                    main()
+                                    main(task_manager)
                                     mock_success.assert_called_once_with(
                                         "Task created successfully!"
                                     )
 
 
-def test_display_complete_task() -> None:
+def test_display_complete_task(task_manager: TaskManager) -> None:
     """
     Test the main interface of the Task Manager for the 'Complete Task' option.
     """
@@ -117,13 +129,13 @@ def test_display_complete_task() -> None:
         ) as mock_subheader:
             with patch("to_do_list_project.streamlit_app.st.number_input"):
                 with patch("to_do_list_project.streamlit_app.st.button"):
-                    main()
+                    main(task_manager)
                     mock_subheader.assert_called_once_with(
                         "Mark a Task as Complete"
                     )
 
 
-def test_display_delete_task() -> None:
+def test_display_delete_task(task_manager: TaskManager) -> None:
     """
     Test the main interface of the Task Manager for the 'Delete Task' option.
     """
@@ -136,11 +148,11 @@ def test_display_delete_task() -> None:
         ) as mock_subheader:
             with patch("to_do_list_project.streamlit_app.st.number_input"):
                 with patch("to_do_list_project.streamlit_app.st.button"):
-                    main()
+                    main(task_manager)
                     mock_subheader.assert_called_once_with("Delete a Task")
 
 
-def test_display_view_tasks() -> None:
+def test_display_view_tasks(task_manager: TaskManager) -> None:
     """
     Test the main interface of the Task Manager for the 'View Tasks' option.
     """
@@ -151,5 +163,5 @@ def test_display_view_tasks() -> None:
         with patch(
             "to_do_list_project.streamlit_app.st.subheader"
         ) as mock_subheader:
-            main()
+            main(task_manager)
             mock_subheader.assert_called_once_with("Existing Tasks")

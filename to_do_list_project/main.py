@@ -70,9 +70,7 @@ def validate_priority(
     try:
         return True, TaskPriority[priority_str.upper()]
     except KeyError:
-        logger.error(
-            "Invalid priority value. Should be: LOW, MEDIUM or HIGH."
-        )
+        logger.error("Invalid priority value. Should be: LOW, MEDIUM or HIGH.")
         return False, "Invalid priority value. Use LOW, MEDIUM, or HIGH."
 
 
@@ -245,10 +243,8 @@ def display_all_tasks(task_manager) -> None:
         print("No tasks.")
 
 
-def main() -> None:
+def main(task_manager: TaskManager) -> None:
     """Run the Task Manager app."""
-    task_manager = TaskManager()
-
     while True:
         print("\n--- Task Manager ---")
         print("Choose an option:")
@@ -277,4 +273,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    task_manager = TaskManager()
+    main(task_manager)

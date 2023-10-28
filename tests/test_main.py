@@ -418,7 +418,9 @@ def mock_get_input(*args, **kwargs):
     "mock_input_values",
     [(["1", "Some Task Details", "6"])],
 )
-def test_main(monkeypatch, capsys, mock_input_values) -> None:
+def test_main(
+    task_manager: TaskManager, monkeypatch, capsys, mock_input_values
+) -> None:
     """
     Test the main Task Manager app loop based on mocked user input.
     """
@@ -429,7 +431,7 @@ def test_main(monkeypatch, capsys, mock_input_values) -> None:
     mock_get_input.values = mock_input_values
 
     try:
-        main()
+        main(task_manager)
     except NoMoreInputs:
         pass
 
