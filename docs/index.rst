@@ -3,14 +3,39 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to To_do_list's documentation!
+.. image:: _static/logo.png
+   :alt: Description alternative pour l'image
+   :width: 1200px
+
+Documentation
 ======================================
+
+Modules
+-------
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   main
+   streamlit
+   task_manager
+   task
+   db
 
+
+Tests
+-----
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   test_main
+   test_db
+   test_task
+   test_task_manager
+   test_streamlit
 
 Indices and tables
 ==================

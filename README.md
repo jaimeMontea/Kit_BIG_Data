@@ -2,7 +2,7 @@
 
 ## Présentation du Projet
 
-Ce projet porte sur la réalisation d'un __Task Manager__ réalisée dans le cadre du mastère __Intelligence Artificielle__ de Telecom Paris. Le principal objectif de ce travail est d'offrir une application simple et intuitive pour gérer des tâches.
+Ce projet porte sur la réalisation d'un __Task Manager__ réalisée dans le cadre du mastère __Intelligence Artificielle__ de __Telecom Paris__. Le principal objectif de ce travail est d'offrir une application simple et intuitive pour gérer des tâches.
 
 ## Configuration de l'environnement
 
@@ -82,7 +82,18 @@ python -m to_do_list_project.main
 ```
 
 ### Documentation générée avec Sphinx :
-Ouvrir le fichier docs/_build/html/index.html sur votre navigateur internet.
+
+1. **Depuis la racine du projet**:
+```
+cd docs
+```
+
+2. **Générer la documentation**:
+```
+make html
+```
+
+3. Ouvrez le fichier **docs/_build/html/index.html** sur votre navigateur internet.
 
 ### Ouvrir l'interface graphique générée avec Streamlit :
 
