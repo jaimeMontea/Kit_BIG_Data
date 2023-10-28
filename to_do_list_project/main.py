@@ -17,15 +17,16 @@ from .task import TaskPriority
 from .task_manager import TaskManager
 from .task_manager import TaskNotFoundError
 
+
 def setup_logger(log_file: str) -> Type[logging.Logger]:
     """
-        Set up a logger to write all user actions.
+    Set up a logger to write all user actions.
 
-        Args:
-            log_file (str): path where the log file is stored.
+    Args:
+        log_file (str): path where the log file is stored.
 
-        Returns:
-            Type[logging.Logger]: Logger object.
+    Returns:
+        Type[logging.Logger]: Logger object.
     """
     logger = logging.getLogger("user_input")
     if not logger.handlers:
@@ -39,20 +40,26 @@ def setup_logger(log_file: str) -> Type[logging.Logger]:
 
     return logger
 
+
 current_dir = os.path.dirname(__file__)
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 logger = setup_logger(os.path.join(parent_dir, "logs", "user_input.log"))
+
 
 def validate_date(date_str: str) -> Tuple[bool, str]:
     """Validate a date string and return a datetime object if valid."""
     try:
         due_date = datetime.strptime(date_str, "%Y/%m/%d")
         if due_date.date() < datetime.now().date():
-            logger.error(f"Wrong date format. Due date must be after present time.")
+            logger.error(
+                "Wrong date format. Due date must be after present time."
+            )
             return False, "Due date must be in the future."
         return True, due_date
     except ValueError:
-        logger.error(f"Wrong date format. Input data not corresponging to format YYYY/MM/DD.")
+        logger.error(
+            "Wrong date format. Input data  need this format YYYY/MM/DD."
+        )
         return False, "Invalid date format."
 
 
@@ -63,7 +70,7 @@ def validate_priority(
     try:
         return True, TaskPriority[priority_str.upper()]
     except KeyError:
-        logger.error(f"Invalid priority value. Not found in default values: LOW, MEDIUM or HIGH.")
+        logger.error("Invalid priority value. Should be: LOW, MEDIUM or HIGH.")
         return False, "Invalid priority value. Use LOW, MEDIUM, or HIGH."
 
 
@@ -121,7 +128,7 @@ def add_task(task_manager: TaskManager) -> None:
         ),
     )
 
-    result = task_manager.add_task(
+    task_manager.add_task(
         name,
         description,
         due_date,
@@ -129,8 +136,8 @@ def add_task(task_manager: TaskManager) -> None:
         priority=priority,
         categories=categories,
     )
-    if result is not None:
-        print(f"Task '{name}' added successfully.")
+
+    print(f"Task '{name}' added successfully.")
 
 
 def remove_task(task_manager: TaskManager) -> None:
@@ -182,17 +189,15 @@ def modify_task(task_manager) -> None:
 
     if task_id not in list_id:
         print("ID not found")
-        logger.error("Task with ID {task_id} not found.")
-        return 
+        logger.error(f"Task with ID {task_id} not found.")
+        return
 
     name = input("Enter new name[Press enter to not change]: ")
-    # name = get_input("Enter new name[Press enter to not change]: ", validate_date)
     description = input("Enter new description[Press enter to not change]: ")
     due_date = input("Enter new due_date (YYYY/MM/DD)[Press enter to not change]: ")
     
 
     due_date = datetime.strptime(due_date, "%Y/%m/%d")
-    print("due_date", due_date)
     assignee = input("Enter new assignee[Press enter to not change]: ")
     task_manager.modify_task(task_id, name, description, due_date, assignee)
 
@@ -220,22 +225,32 @@ def choice_validator(user_input: str) -> Tuple[bool, Union[str, int]]:
         return False, "Please enter a valid integer."
 
 
-def display_all_tasks(task_manager):
+def display_all_tasks(task_manager) -> None:
     """Display all tasks."""
     tasks = task_manager.get_all_tasks()
     if tasks:
-        columns = ('id', 'name', 'description', 
-                'creation_date', 'due_date', 'assignee',
-                'status', 'priority', 'category')
-        print(tabulate([columns] + tasks, headers='firstrow', tablefmt='fancy_grid'))
-    else: 
+        columns = (
+            "id",
+            "name",
+            "description",
+            "creation_date",
+            "due_date",
+            "assignee",
+            "status",
+            "priority",
+            "category",
+        )
+        print(
+            tabulate(
+                [columns] + tasks, headers="firstrow", tablefmt="fancy_grid"
+            )
+        )
+    else:
         print("No tasks.")
 
-def main():
+
+def main(task_manager: TaskManager) -> None:
     """Run the Task Manager app."""
-
-    task_manager = TaskManager()
-
     while True:
         print("\n--- Task Manager ---")
         print("Choose an option:")
@@ -264,4 +279,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    task_manager = TaskManager()
+    main(task_manager)

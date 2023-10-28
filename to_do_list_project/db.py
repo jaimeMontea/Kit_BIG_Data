@@ -115,7 +115,7 @@ class SQLiteDB:
             create_table_sql = self.generate_sql_creation_statement()
             cursor.execute(create_table_sql)
             self.conn.commit()
-            self.logger.info(f"Table tasks created successfully")
+            self.logger.info("Table tasks created successfully")
         except sqlite3.Error as e:
             self.logger.error(f"Error creating table: {e}")
         finally:

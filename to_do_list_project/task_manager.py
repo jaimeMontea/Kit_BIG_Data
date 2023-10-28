@@ -17,7 +17,7 @@ Classes:
 """
 
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from .db import SQLiteDB
 from .task import Task, TaskData, TaskStatus, TaskPriority
@@ -36,7 +36,7 @@ class TaskManager:
     related to tasks.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, db: Optional[SQLiteDB] = None) -> None:
         """
         Initialize the TaskManager object.
 
@@ -46,8 +46,7 @@ class TaskManager:
         Raises:
             DatabaseConnectionError: If the database connection fails.
         """
-
-        self._db = SQLiteDB()
+        self._db = db or SQLiteDB()
         self._tasks = self.load_tasks_from_db()
 
     def load_tasks_from_db(self) -> List[Task]:
@@ -69,9 +68,15 @@ class TaskManager:
                 ) = task_tuple
 
                 status = [
-                    c_status for c_status in TaskStatus if c_status.value == status][0]
+                    c_status
+                    for c_status in TaskStatus
+                    if c_status.value == status
+                ][0]
                 priority = [
-                    c_priority for c_priority in TaskPriority if c_priority.value == priority][0]
+                    c_priority
+                    for c_priority in TaskPriority
+                    if c_priority.value == priority
+                ][0]
                 task = Task(
                     task_id,
                     name,
@@ -104,7 +109,7 @@ class TaskManager:
             "assignee": assignee,
             "status": status,
             "priority": priority,
-            "categories": categories if categories is not None else []
+            "categories": categories if categories is not None else [],
         }
 
         task_id = self._db.insert_data("tasks", task_data)
@@ -116,7 +121,7 @@ class TaskManager:
             assignee,
             status,
             priority,
-            categories
+            categories,
         )
         self._tasks.append(task)
         return task_id

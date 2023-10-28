@@ -9,13 +9,11 @@ Streamlit framework.
 from datetime import datetime
 import streamlit as st
 
-from .db import SQLiteDB
 from .task import TaskData, TaskStatus, TaskPriority
+from .task_manager import TaskManager
 
-database = SQLiteDB("tasks.db")
 
-
-def main() -> None:
+def main(task_manager: TaskManager) -> None:
     """
     Drives the user interface for the Task Manager application using Streamlit.
 
@@ -68,7 +66,7 @@ def main() -> None:
                 "priority": TaskPriority(task_priority),
                 "categories": task_categories.split(",")
             }
-            database.insert_data("tasks", new_task)
+            task_manager._db.insert_data("tasks", new_task)
             st.success("Task created successfully!")
 
     elif choice == "View Tasks":
@@ -78,16 +76,17 @@ def main() -> None:
         st.subheader("Mark a Task as Complete")
         task_id = st.number_input("Task ID", min_value=0)
         if st.button("Mark as Complete"):
-            database.fetch_data(task_id, to_do="COMPLETE")
+            task_manager._db.fetch_data(task_id, to_do="COMPLETE")
             st.success(f"Task {task_id} marked as complete!")
 
     elif choice == "Delete Task":
         st.subheader("Delete a Task")
         task_id = st.number_input("Task ID to Delete", min_value=0)
         if st.button("Delete"):
-            database.remove_task(task_id)
+            task_manager._db.remove_task(task_id)
             st.success(f"Task {task_id} deleted!")
 
 
 if __name__ == "__main__":
-    main()
+    task_manager = TaskManager()
+    main(task_manager)
