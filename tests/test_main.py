@@ -7,7 +7,7 @@ This script is dedicated to test all the functionalities from main.py file.
 from datetime import datetime, timedelta
 import logging
 import sqlite3
-from typing import Any
+from typing import Any, Tuple, Union
 from unittest.mock import call, MagicMock, Mock, patch, ANY
 import pytest
 
@@ -17,6 +17,8 @@ from to_do_list_project.main import (
     choice_validator,
     complete_task,
     display_all_tasks,
+    get_input,
+    main,
     modify_task,
     remove_task,
     validate_date,
@@ -268,3 +270,74 @@ def test_validate_priority_valid_values() -> None:
         valid, response = validate_priority(valid_priority)
         assert valid
         assert response == TaskPriority[valid_priority.upper()]
+
+
+class NoMoreInputs(Exception):
+    """Raised when there are no more mock inputs."""
+
+
+def mock_get_input(*args, **kwargs):
+    """Mock inputs."""
+    if not mock_get_input.values:
+        raise NoMoreInputs
+    return mock_get_input.values.pop(0)
+
+
+@pytest.mark.parametrize(
+    "mock_input_values",
+    [(["1", "Some Task Details", "6"])],
+)
+def test_main(monkeypatch, capsys, mock_input_values):
+    """
+    Test the main Task Manager app loop based on mocked user input.
+    """
+    monkeypatch.setattr(
+        "to_do_list_project.task_manager.TaskManager", lambda: None
+    )
+    monkeypatch.setattr("to_do_list_project.main.get_input", mock_get_input)
+    mock_get_input.values = mock_input_values
+
+    try:
+        main()
+    except NoMoreInputs:
+        pass
+
+    captured = capsys.readouterr()
+    captured_output = captured.out
+    assert "Choose an option" in captured_output
+    assert "Add Task" in captured_output
+    assert "Remove Task" in captured_output
+    assert "Display All Tasks" in captured_output
+    assert "Complete Task" in captured_output
+    assert "Modify Task" in captured_output
+    assert "Exit" in captured_output
+
+
+def simple_validator(input_str: str) -> Tuple[bool, Union[int, str]]:
+    """Simple validation function that checks if input is 'valid'."""
+    if input_str == "valid":
+        return True, "valid"
+    return False, "Invalid input. Try again."
+
+
+@pytest.mark.parametrize(
+    "mock_inputs, expected_output, expected_return",
+    [
+        (["valid"], "", "valid"),
+        (["invalid", "valid"], "Invalid input. Try again.\n", "valid"),
+    ],
+)
+def test_get_input(
+    monkeypatch, capsys, mock_inputs, expected_output, expected_return
+):
+    """
+    Test the get_input function by simulating various user input scenarios.
+    """
+    monkeypatch.setattr("builtins.input", mock_get_input)
+    mock_get_input.values = mock_inputs
+
+    result = get_input("Enter a value: ", simple_validator)
+
+    captured = capsys.readouterr()
+    assert captured.out == expected_output
+    assert result == expected_return
