@@ -159,38 +159,48 @@ def test_remove_task_successful(
         )
 
 
-def test_remove_task_invalid_input(task_manager_with_tasks: [TaskManager, Any]) -> None:
+def test_remove_task_invalid_input(
+    task_manager_with_tasks: [TaskManager, Any]
+) -> None:
     """
     Test behavior when an invalid task ID is provided.
     """
-    with patch("to_do_list_project.main.input", return_value="invalid_id"), \
-            patch("to_do_list_project.main.print") as mock_print, \
-            patch("to_do_list_project.main.logger.error") as mock_logger_error:
-
+    with patch(
+        "to_do_list_project.main.input", return_value="invalid_id"
+    ), patch("to_do_list_project.main.print") as mock_print, patch(
+        "to_do_list_project.main.logger.error"
+    ) as mock_logger_error:
         remove_task(task_manager_with_tasks[0])
 
         mock_print.assert_called_once_with(
-            "Please enter a valid integer for task ID.")
+            "Please enter a valid integer for task ID."
+        )
         mock_logger_error.assert_called_once_with(
-            "Input ID is not a valid integer.")
+            "Input ID is not a valid integer."
+        )
 
 
-def test_remove_task_not_found(task_manager_with_tasks: [TaskManager, Any]) -> None:
+def test_remove_task_not_found(
+    task_manager_with_tasks: [TaskManager, Any]
+) -> None:
     """
     Test behavior when a non-existing task ID is provided.
     """
     task_manager_with_tasks[0].remove_task = MagicMock(
-        side_effect=TaskNotFoundError)
+        side_effect=TaskNotFoundError
+    )
 
-    with patch("to_do_list_project.main.input", return_value="99"), \
-            patch("to_do_list_project.main.print") as mock_print, \
-            patch("to_do_list_project.main.logger.error") as mock_logger_error:
-
+    with patch("to_do_list_project.main.input", return_value="99"), patch(
+        "to_do_list_project.main.print"
+    ) as mock_print, patch(
+        "to_do_list_project.main.logger.error"
+    ) as mock_logger_error:
         remove_task(task_manager_with_tasks[0])
 
         mock_print.assert_called_once_with("Task with given ID not found.")
         mock_logger_error.assert_called_once_with(
-            "Task with given ID not found.")
+            "Task with given ID not found."
+        )
 
 
 def test_display_all_tasks_with_no_tasks(task_manager: TaskManager) -> None:
@@ -299,16 +309,17 @@ def test_modify_task_invalid_id_input() -> None:
     mock_task_manager = MagicMock()
     mock_task_manager.get_all_tasks.return_value = []
 
-    with patch('builtins.input', side_effect=["invalid_id"]), \
-            patch('builtins.print') as mock_print, \
-            patch('logging.Logger.error') as mock_logger_error:
-
+    with patch("builtins.input", side_effect=["invalid_id"]), patch(
+        "builtins.print"
+    ) as mock_print, patch("logging.Logger.error") as mock_logger_error:
         modify_task(mock_task_manager)
 
     mock_print.assert_called_once_with(
-        "Please enter a valid integer for task ID.")
+        "Please enter a valid integer for task ID."
+    )
     mock_logger_error.assert_called_once_with(
-        "Input ID is not a valid integer")
+        "Input ID is not a valid integer"
+    )
     mock_task_manager.modify_task.assert_not_called()
 
 
@@ -319,10 +330,9 @@ def test_modify_task_id_not_found() -> None:
     mock_task_manager = MagicMock()
     mock_task_manager.get_all_tasks.return_value = []
 
-    with patch('builtins.input', side_effect=["42"]), \
-            patch('builtins.print') as mock_print, \
-            patch('logging.Logger.error') as mock_logger_error:
-
+    with patch("builtins.input", side_effect=["42"]), patch(
+        "builtins.print"
+    ) as mock_print, patch("logging.Logger.error") as mock_logger_error:
         modify_task(mock_task_manager)
 
     mock_print.assert_called_once_with("ID not found")
@@ -475,8 +485,8 @@ def test_setup_logger() -> None:
     for handler in logger.handlers[:]:
         logger.removeHandler(handler)
 
-    with patch('builtins.open', m):
-        logger = setup_logger('fake_path.log')
+    with patch("builtins.open", m):
+        logger = setup_logger("fake_path.log")
         logger.info(test_message)
 
     assert m.called, "Expected 'open' to have been called"
@@ -486,8 +496,8 @@ def test_setup_logger() -> None:
         if name == "().write":
             write_calls.append(args[0])
 
-    for call in write_calls:
-        if test_message in call:
+    for item  in write_calls:
+        if test_message in item :
             break
     else:
         assert False, f"Expected '{test_message}' to be written to mock file"
