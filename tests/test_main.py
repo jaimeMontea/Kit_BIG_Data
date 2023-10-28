@@ -6,7 +6,6 @@ This script is dedicated to test all the functionalities from main.py file.
 
 from datetime import datetime, timedelta
 import logging
-import os
 import sqlite3
 from typing import Any, Tuple, Union
 from unittest.mock import call, MagicMock, Mock, mock_open, patch, ANY
@@ -28,6 +27,7 @@ from to_do_list_project.main import (
 )
 from to_do_list_project.task_manager import (
     TaskManager,
+    TaskNotFoundError,
     TaskPriority,
     TaskStatus,
 )
@@ -159,6 +159,40 @@ def test_remove_task_successful(
         )
 
 
+def test_remove_task_invalid_input(task_manager_with_tasks: [TaskManager, Any]) -> None:
+    """
+    Test behavior when an invalid task ID is provided.
+    """
+    with patch("to_do_list_project.main.input", return_value="invalid_id"), \
+            patch("to_do_list_project.main.print") as mock_print, \
+            patch("to_do_list_project.main.logger.error") as mock_logger_error:
+
+        remove_task(task_manager_with_tasks[0])
+
+        mock_print.assert_called_once_with(
+            "Please enter a valid integer for task ID.")
+        mock_logger_error.assert_called_once_with(
+            "Input ID is not a valid integer.")
+
+
+def test_remove_task_not_found(task_manager_with_tasks: [TaskManager, Any]) -> None:
+    """
+    Test behavior when a non-existing task ID is provided.
+    """
+    task_manager_with_tasks[0].remove_task = MagicMock(
+        side_effect=TaskNotFoundError)
+
+    with patch("to_do_list_project.main.input", return_value="99"), \
+            patch("to_do_list_project.main.print") as mock_print, \
+            patch("to_do_list_project.main.logger.error") as mock_logger_error:
+
+        remove_task(task_manager_with_tasks[0])
+
+        mock_print.assert_called_once_with("Task with given ID not found.")
+        mock_logger_error.assert_called_once_with(
+            "Task with given ID not found.")
+
+
 def test_display_all_tasks_with_no_tasks(task_manager: TaskManager) -> None:
     """Test if display no tasks for user."""
     with patch("builtins.print") as print_mock:
@@ -258,6 +292,44 @@ def test_modify_task_calls_modify_task() -> None:
     )
 
 
+def test_modify_task_invalid_id_input() -> None:
+    """
+    Test the behavior when an invalid task ID is provided.
+    """
+    mock_task_manager = MagicMock()
+    mock_task_manager.get_all_tasks.return_value = []
+
+    with patch('builtins.input', side_effect=["invalid_id"]), \
+            patch('builtins.print') as mock_print, \
+            patch('logging.Logger.error') as mock_logger_error:
+
+        modify_task(mock_task_manager)
+
+    mock_print.assert_called_once_with(
+        "Please enter a valid integer for task ID.")
+    mock_logger_error.assert_called_once_with(
+        "Input ID is not a valid integer")
+    mock_task_manager.modify_task.assert_not_called()
+
+
+def test_modify_task_id_not_found() -> None:
+    """
+    Test the behavior when a non-existing task ID is provided.
+    """
+    mock_task_manager = MagicMock()
+    mock_task_manager.get_all_tasks.return_value = []
+
+    with patch('builtins.input', side_effect=["42"]), \
+            patch('builtins.print') as mock_print, \
+            patch('logging.Logger.error') as mock_logger_error:
+
+        modify_task(mock_task_manager)
+
+    mock_print.assert_called_once_with("ID not found")
+    mock_logger_error.assert_called_once_with("Task with ID 42 not found.")
+    mock_task_manager.modify_task.assert_not_called()
+
+
 def test_validate_date_valid_future_date() -> None:
     """Test that a valid future date string is correctly identified."""
     future_date = (datetime.now() + timedelta(days=5)).strftime("%Y/%m/%d")
@@ -266,7 +338,7 @@ def test_validate_date_valid_future_date() -> None:
     assert response.date() == (datetime.now() + timedelta(days=5)).date()
 
 
-def test_validate_date_past_date():
+def test_validate_date_past_date() -> None:
     """
     Test that a past date string is correctly identified as invalid
     and returns an appropriate error message.
@@ -278,7 +350,7 @@ def test_validate_date_past_date():
     assert response == "Due date must be in the future."
 
 
-def test_validate_date_invalid_format():
+def test_validate_date_invalid_format() -> None:
     """
     Test that an invalid date format is correctly identified and
     returns an appropriate error message.
@@ -298,7 +370,7 @@ def test_validate_priority_valid_values() -> None:
         assert response == TaskPriority[valid_priority.upper()]
 
 
-def test_validate_priority_invalid_values():
+def test_validate_priority_invalid_values() -> None:
     """
     Test that invalid priority values are correctly identified
     and return an appropriate error message.
@@ -310,7 +382,7 @@ def test_validate_priority_invalid_values():
         assert response == "Invalid priority value. Use LOW, MEDIUM, or HIGH."
 
 
-def test_validate_priority_empty_string():
+def test_validate_priority_empty_string() -> None:
     """
     Test that an empty string is correctly identified as an invalid priority
     and returns an appropriate error message.
@@ -336,7 +408,7 @@ def mock_get_input(*args, **kwargs):
     "mock_input_values",
     [(["1", "Some Task Details", "6"])],
 )
-def test_main(monkeypatch, capsys, mock_input_values):
+def test_main(monkeypatch, capsys, mock_input_values) -> None:
     """
     Test the main Task Manager app loop based on mocked user input.
     """
@@ -378,7 +450,7 @@ def simple_validator(input_str: str) -> Tuple[bool, Union[int, str]]:
 )
 def test_get_input(
     monkeypatch, capsys, mock_inputs, expected_output, expected_return
-):
+) -> None:
     """
     Test the get_input function by simulating various user input scenarios.
     """
@@ -392,7 +464,7 @@ def test_get_input(
     assert result == expected_return
 
 
-def test_setup_logger():
+def test_setup_logger() -> None:
     """
     Test the setup_logger function without creating an actual file.
     """
@@ -413,10 +485,6 @@ def test_setup_logger():
     for name, args, _ in m.mock_calls:
         if name == "().write":
             write_calls.append(args[0])
-
-    print("Write calls:")
-    for call in write_calls:
-        print(call)
 
     for call in write_calls:
         if test_message in call:

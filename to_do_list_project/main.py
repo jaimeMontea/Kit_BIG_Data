@@ -190,7 +190,7 @@ def modify_task(task_manager) -> None:
 
     if task_id not in list_id:
         print("ID not found")
-        logger.error("Task with ID {task_id} not found.")
+        logger.error(f"Task with ID {task_id} not found.")
         return
 
     name = input("Enter new name[Press enter to not change]: ")
@@ -221,7 +221,7 @@ def choice_validator(user_input: str) -> Tuple[bool, Union[str, int]]:
         return False, "Please enter a valid integer."
 
 
-def display_all_tasks(task_manager):
+def display_all_tasks(task_manager) -> None:
     """Display all tasks."""
     tasks = task_manager.get_all_tasks()
     if tasks:
@@ -245,7 +245,7 @@ def display_all_tasks(task_manager):
         print("No tasks.")
 
 
-def main():
+def main() -> None:
     """Run the Task Manager app."""
     task_manager = TaskManager()
 
