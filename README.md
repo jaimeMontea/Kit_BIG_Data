@@ -82,7 +82,18 @@ python -m to_do_list_project.main
 ```
 
 ### Documentation générée avec Sphinx :
-Ouvrir le fichier docs/_build/html/index.html sur votre navigateur internet.
+
+1. **Depuis la racine du projet**:
+```
+cd docs
+```
+
+2. **Générer la documentation**:
+```
+make html
+```
+
+3. Ouvrez le fichier docs/_build/html/index.html sur votre navigateur internet.
 
 ### Ouvrir l'interface graphique générée avec Streamlit :
 
