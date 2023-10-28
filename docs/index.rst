@@ -3,7 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Task Manager's documentation!
+.. image:: _static/logo.png
+   :alt: Description alternative pour l'image
+   :width: 1200px
+
+Documentation
 ======================================
 
 Modules
@@ -25,7 +29,7 @@ Tests
 
 .. toctree::
    :maxdepth: 2
-   :caption: Tests:
+   :caption: Contents:
 
    test_main
    test_db
