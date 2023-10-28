@@ -9,8 +9,8 @@ Streamlit framework.
 from datetime import datetime
 import streamlit as st
 
-from .task import TaskData, TaskStatus, TaskPriority
-from .task_manager import TaskManager
+from to_do_list_project.task import TaskData, TaskStatus, TaskPriority
+from to_do_list_project.task_manager import TaskManager
 
 
 def main(task_manager: TaskManager) -> None:
