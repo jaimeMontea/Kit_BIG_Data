@@ -496,8 +496,8 @@ def test_setup_logger() -> None:
         if name == "().write":
             write_calls.append(args[0])
 
-    for item  in write_calls:
-        if test_message in item :
+    for item in write_calls:
+        if test_message in item:
             break
     else:
         assert False, f"Expected '{test_message}' to be written to mock file"
