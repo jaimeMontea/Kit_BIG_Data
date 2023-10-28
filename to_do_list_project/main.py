@@ -109,6 +109,7 @@ def add_task(task_manager: TaskManager) -> None:
         lambda x: (bool(x), x if x else "Task description cannot be empty."),
     )
     due_date = get_input("Enter due date (YYYY/MM/DD): ", validate_date)
+    print("due_date", due_date)
     assignees = get_input(
         "Enter assignees (comma separated): ",
         lambda x: (
@@ -193,9 +194,14 @@ def modify_task(task_manager) -> None:
 
     name = input("Enter new name[Press enter to not change]: ")
     description = input("Enter new description[Press enter to not change]: ")
-    due_date = input("Enter new due_date[Press enter to not change]: ")
+    due_date = input("Enter new due_date (YYYY/MM/DD)[Press enter to not change]: ")
+    
+
+    due_date = datetime.strptime(due_date, "%Y/%m/%d")
     assignee = input("Enter new assignee[Press enter to not change]: ")
     task_manager.modify_task(task_id, name, description, due_date, assignee)
+
+    print("Task modified successfully.")
 
 
 def choice_validator(user_input: str) -> Tuple[bool, Union[str, int]]:
