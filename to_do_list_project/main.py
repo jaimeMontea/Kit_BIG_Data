@@ -50,10 +50,10 @@ def validate_date(date_str: str) -> Tuple[bool, str]:
     """
     Validate a date string and return a datetime object if valid.
     
-    Args: 
+    Args:
         date_str (str): Date to be validated.
-    Returns: 
-        Tuple[bool, str]: Tuple where the first value is a boolean representing if the test passed and 
+    Returns:
+        Tuple[bool, str]: Tuple where the first value is a boolean representing if the test passed and
                           the second value representing the date validated.
     """
     try:
@@ -77,11 +77,11 @@ def validate_priority(
     """
     Validate a priority.
     
-    Args: 
+    Args:
         priority_str (str): The priority of the task.
 
-    Returns: 
-        Tuple[bool, str]: Tuple where the first value is a boolean representing if the test passed and 
+    Returns:
+        Tuple[bool, str]: Tuple where the first value is a boolean representing if the test passed and
                           the second value representing the priority validated.
     """
     try:
@@ -98,11 +98,11 @@ def validate_status(
     """
     Validate a Status.
     
-    Args: 
+    Args:
         status_str (str): The status of the task.
 
-    Returns: 
-        Tuple[bool, str]: Tuple where the first value is a boolean representing if the test passed and 
+    Returns:
+        Tuple[bool, str]: Tuple where the first value is a boolean representing if the test passed and
                           the second value representing the status validated.
     """
     try:
@@ -139,8 +139,8 @@ def add_task(task_manager: TaskManager) -> None:
     """
     Add a task.
     
-    Args: 
-        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    Args:
+        task_manager (TaskManager): A TaskManager instance which control all task actions.
     """
     name = get_input(
         "Enter task name: ",
@@ -154,7 +154,7 @@ def add_task(task_manager: TaskManager) -> None:
     assignees = get_input(
         "Enter assignee: ",
         lambda x: (
-            bool(x),x if x else "No Assignee"),
+            bool(x), x if x else "No Assignee"),
     )
     priority = get_input(
         "Enter task priority (LOW, MEDIUM, HIGH): ", validate_priority
@@ -162,7 +162,7 @@ def add_task(task_manager: TaskManager) -> None:
     categories = get_input(
         "Enter task category: ",
         lambda x: (
-            bool(x),x if x else "No category",
+            bool(x), x if x else "No category",
         ),
     )
 
@@ -189,8 +189,8 @@ def remove_task(task_manager: TaskManager) -> None:
     """
     Remove a task by its ID.
     
-    Args: 
-        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    Args:
+        task_manager (TaskManager): A TaskManager instance which control all task actions.
     """
     try:
         task_id = int(input("Enter the task ID to remove: "))
@@ -211,8 +211,8 @@ def complete_task(task_manager: TaskManager) -> None:
     """
     Mark a task as completed by its ID.
     
-    Args: 
-        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    Args:
+        task_manager (TaskManager): A TaskManager instance which control all task actions.
     """
     try:
         task_id = int(input("Enter the task ID to mark as completed: "))
@@ -234,8 +234,8 @@ def modify_task(task_manager) -> None:
     """
     Modify a task by its ID.
     
-    Args: 
-        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    Args:
+        task_manager (TaskManager): A TaskManager instance which control all task actions.
     """
     try:
         task_id = int(input("Enter the task ID to modify: "))
@@ -263,7 +263,7 @@ def modify_task(task_manager) -> None:
     status = get_input("Enter task status (Start, In Progress, Complete) [Press enter to not change]: ", validate_status)
     priority = get_input("Enter task priority (Low, Medium, High) [Press enter to not change]: ", validate_priority)
 
-    try: 
+    try:
         task_manager.modify_task(task_id, name, description, due_date, assignee, status, priority)
         print("Task modified successfully.")
     except Exception as e:
@@ -297,8 +297,8 @@ def display_all_tasks(task_manager: TaskManager) -> None:
     """
     Display all tasks.
     
-    Args: 
-        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    Args:
+        task_manager (TaskManager): A TaskManager instance which control all task actions.
     """
     tasks = task_manager.get_all_tasks()
     if tasks:
@@ -326,8 +326,8 @@ def main(task_manager: TaskManager) -> None:
     """
     Run the Task Manager app.
     
-    Args: 
-        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    Args:
+        task_manager (TaskManager): A TaskManager instance which control all task actions.
     """
     while True:
         print("\n--- Task Manager ---")
