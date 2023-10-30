@@ -16,7 +16,7 @@ Classes:
       and other utility functionalities related to tasks.
 """
 
-from datetime import datetime, date
+from datetime import datetime
 from typing import List, Optional
 
 from .db import SQLiteDB
@@ -54,7 +54,7 @@ class TaskManager:
         Load all tasks from database.
 
         Returns:
-            List of Task instances. 
+            List of Task instances.
         
         """
         all_tasks = self._db.get_all_tasks()
@@ -109,7 +109,7 @@ class TaskManager:
         """
         Add task to database.
 
-        Args: 
+        Args:
             name (str): Name of the task.
             description (str): Description of the data base.
             due_date (datetime.date): Due Date of the task.
@@ -118,7 +118,7 @@ class TaskManager:
             priority (TaskPriority): Priority of the task.
             categories (str): Category of the task.
 
-        Returns: 
+        Returns:
             task_id (int): Id of the task in data base.
         """
         task_data: TaskData = {
@@ -190,9 +190,9 @@ class TaskManager:
         Args:
             task_id (int): Task id of the task.
         Returns:
-            Task instance. 
+            Task instance.
         Raises:
-            TaskNotFoundError if task_id is not found. 
+            TaskNotFoundError if task_id is not found.
         """
         self._tasks = self.load_tasks_from_db()
         for task in self._tasks:
@@ -236,9 +236,9 @@ class TaskManager:
             task.due_date = new_due_date
         if new_assignee:
             task.assignee = new_assignee
-        if new_status: 
+        if new_status:
             task.status = new_status
-        if new_priority: 
+        if new_priority:
             task.priority = new_priority
 
         self._db.fetch_data(task_id, to_do="MODIFY", task=task)
