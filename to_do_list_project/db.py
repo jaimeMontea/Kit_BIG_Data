@@ -195,11 +195,13 @@ class SQLiteDB:
             elif to_do == "MODIFY":
                 query = self.generate_sql_modify_statement()
                 cursor.execute(
-                    query, (task.name, task.description, task.due_date.strftime("%Y/%m/%d"),
-                    task.assignee, 
-                    task.status.value,
-                    task.priority.value,
-                    task_id)
+                    query, (task.name,
+                            task.description,
+                            task.due_date.strftime("%Y/%m/%d"),
+                            task.assignee,
+                            task.status.value,
+                            task.priority.value,
+                            task_id)
                 )
                 self.logger.info("Task modified successfully")
             self.conn.commit()
@@ -334,7 +336,7 @@ class SQLiteDB:
                   SET  name = ?,
                        description = ?,
                        due_date = ?,
-                       assignee = ?, 
-                       status = ?, 
+                       assignee = ?,
+                       status = ?,
                        priority = ?
                   WHERE id = ?"""
