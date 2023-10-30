@@ -110,7 +110,6 @@ class Task:
         categories (str, optional): Categories the task belongs to.
         Default is None.
         """
-
         self.id = id
         self.name = name
         self.description = description
