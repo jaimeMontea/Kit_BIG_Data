@@ -155,7 +155,6 @@ class TaskManager:
         Raises:
             TaskNotFoundError: If the task is not found.
         """
-
         self.get_task_by_id(task_id)
         self._db.remove_task(task_id)
         for index, task in enumerate(self._tasks):
@@ -178,6 +177,7 @@ class TaskManager:
     def get_all_tasks(self) -> List[tuple]:
         """
         Get all the tasks of database.
+        
         Returns:
             List of tuples. Each tuple represents the data of the task.
         """
@@ -186,6 +186,7 @@ class TaskManager:
     def get_task_by_id(self, task_id: int) -> Task:
         """
         List all the tasks of database.
+        
         Args:
             task_id (int): Task id of the task.
         Returns:
