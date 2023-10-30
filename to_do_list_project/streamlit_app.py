@@ -84,7 +84,7 @@ def main(task_manager: TaskManager) -> None:
             logger.info(f"(Create) categories: {task_categories}")
 
             try:
-                Task(1, task_name, task_description, task_due_date, task_assignee, 
+                Task(1, task_name, task_description, task_due_date, task_assignee,
                      TaskStatus(task_status), TaskPriority(task_priority), task_categories) # Task instance created to capture any possible error.
                 task_manager._db.insert_data("tasks", new_task_data)
                 st.success("Task created successfully!")
@@ -92,7 +92,6 @@ def main(task_manager: TaskManager) -> None:
             except Exception as e:
                 st.error(e)
                 logger.error("Error when creating task: " + str(e))
-            
 
     elif choice == "View Tasks":
         tasks = task_manager.get_all_tasks()
@@ -109,8 +108,8 @@ def main(task_manager: TaskManager) -> None:
                 "Category",
             )
             table =  pd.DataFrame(tasks, columns=columns)
-            table.replace({"Status": {i.value:i.name for i in TaskStatus}}, inplace=True)
-            table.replace({"Priority": {i.value:i.name for i in TaskPriority}}, inplace=True)
+            table.replace({"Status": {i.value: i.name for i in TaskStatus}}, inplace=True)
+            table.replace({"Priority": {i.value: i.name for i in TaskPriority}}, inplace=True)
             st.dataframe(table, hide_index=True)
         else:
             st.error("No tasks.")
@@ -172,7 +171,7 @@ def main(task_manager: TaskManager) -> None:
             logger.info(f"(Modify) priority: {priority}")
             if due_date:
                 logger.info(f"(Modify) due_date: {due_date}")
-            else: 
+            else:
                 logger.info(f"(Modify) due_date: no input")
             try:
                 task_manager.modify_task(task_id, name, description, due_date, assignee, status, priority)
@@ -181,7 +180,7 @@ def main(task_manager: TaskManager) -> None:
             except ValueError as e:
                 st.error(e)
                 logger.error("Error when modifying task: " + str(e))
-            except Exception as e: 
+            except Exception as e:
                 st.error(e)
                 logger.error("Error when modifying task: " + str(e))
 
