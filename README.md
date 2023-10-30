@@ -2,7 +2,7 @@
 
 ## Présentation du Projet
 
-Ce projet porte sur la réalisation d'un __Task Manager__ réalisée dans le cadre du mastère __Intelligence Artificielle__ de Telecom Paris. Le principal objectif de ce travail est d'offrir une application simple et intuitive pour gérer des tâches.
+Ce projet porte sur la réalisation d'un __Task Manager__ réalisée dans le cadre du mastère __Intelligence Artificielle__ de __Telecom Paris__. Le principal objectif de ce travail est d'offrir une application simple et intuitive pour gérer des tâches.
 
 ## Configuration de l'environnement
 
