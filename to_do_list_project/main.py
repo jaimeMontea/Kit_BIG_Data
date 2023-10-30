@@ -49,6 +49,7 @@ logger = setup_logger(os.path.join(parent_dir, "logs", "user_input.log"))
 def validate_date(date_str: str) -> Tuple[bool, str]:
     """
     Validate a date string and return a datetime object if valid.
+    
     Args: 
         date_str (str): Date to be validated.
     Returns: 
@@ -75,6 +76,7 @@ def validate_priority(
 ) -> Tuple[bool, Union[str, TaskPriority]]:
     """
     Validate a priority.
+    
     Args: 
         priority_str (str): The priority of the task.
 
@@ -95,6 +97,7 @@ def validate_status(
 ) -> Tuple[bool, Union[str, TaskStatus]]:
     """
     Validate a Status.
+    
     Args: 
         status_str (str): The status of the task.
 
