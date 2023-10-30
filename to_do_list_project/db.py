@@ -142,14 +142,12 @@ class SQLiteDB:
             insert_sql = self.generate_sql_insert_statement(table_name)
             name = data["name"]
             description = data["description"]
-            creation_date = data["creation_date"].strftime("%Y/%m/%d %H:%M:%S")
-            due_date = data["due_date"].strftime("%Y/%m/%d %H:%M:%S")
-            assignee = ", ".join(data["assignee"])
+            creation_date = data["creation_date"].strftime("%Y/%m/%d")
+            due_date = data["due_date"].strftime("%Y/%m/%d")
+            assignee = data["assignee"]
             status = data["status"].value
             priority = data["priority"].value
-            category = (
-                "" if not data["categories"] else " ".join(data["categories"])
-            )
+            category = data["categories"]
 
             cursor.execute(
                 insert_sql,
@@ -197,12 +195,18 @@ class SQLiteDB:
             elif to_do == "MODIFY":
                 query = self.generate_sql_modify_statement()
                 cursor.execute(
-                    query, (task[0], task[1], task[2], task[3], task_id)
+                    query, (task.name, task.description, task.due_date.strftime("%Y/%m/%d"),
+                    task.assignee, 
+                    task.status.value,
+                    task.priority.value,
+                    task_id)
                 )
                 self.logger.info("Task modified successfully")
             self.conn.commit()
         except sqlite3.Error as e:
             self.logger.error(f"Error fetching data: {e}")
+        except Exception as e:
+            self.logger.error(f"Error removing data: {e}")
         finally:
             self.close_connection()
 
@@ -267,8 +271,8 @@ class SQLiteDB:
                                         id INTEGER PRIMARY KEY,
                                         name TEXT,
                                         description TEXT,
-                                        creation_date DATETIME,
-                                        due_date DATETIME,
+                                        creation_date DATE,
+                                        due_date DATE,
                                         assignee TEXT,
                                         status INTEGER,
                                         priority INTEGER,
@@ -330,5 +334,7 @@ class SQLiteDB:
                   SET  name = ?,
                        description = ?,
                        due_date = ?,
-                       assignee = ?
+                       assignee = ?, 
+                       status = ?, 
+                       priority = ?
                   WHERE id = ?"""

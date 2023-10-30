@@ -7,17 +7,14 @@ such as id, name, description, due date, assignees, status,
 priority, and categories.
 """
 
-from datetime import datetime
+from datetime import datetime, date
 from enum import Enum, unique
-import re
 from typing import List, TypedDict, Union
 
 
 def parse_date(date_string: str) -> datetime:
     """Convert a string in the format 'DD-MM-YYYY' to a datetime object."""
-    if not re.match(r"\d{2}-\d{2}-\d{4}", date_string):
-        raise ValueError("Invalid date format. It should be 'DD-MM-YYYY'")
-    return datetime.strptime(date_string, "%d-%m-%Y")
+    return datetime.strptime(date_string, "%Y/%m/%d")
 
 
 def format_date(date_obj: datetime) -> str:
@@ -72,10 +69,10 @@ class TaskData(TypedDict):
     description: str
     due_date: datetime
     creation_date: datetime
-    assignee: List[str]
+    assignee: str
     status: TaskStatus
     priority: TaskPriority
-    categories: List[str]
+    categories: str
 
 
 class Task:
@@ -91,10 +88,10 @@ class Task:
         name: str,
         description: str,
         due_date: Union[datetime, str],
-        assignee: list[str],
+        assignee: str,
         status: TaskStatus = TaskStatus.IN_PROGRESS,
         priority: TaskPriority = TaskPriority.MEDIUM,
-        categories: list[str] = None,
+        categories: str = ""
     ) -> None:
         """
         Initialize a Task object.
@@ -105,30 +102,24 @@ class Task:
         due_date (Union[datetime, str]): The due date of the task.
         Can be either a datetime object or a string in
         'DD-MM-YYYY' format.
-        assignee (list[str]): List of assignees for the task.
+        assignee (str): List of assignees for the task.
         status (TaskStatus, optional): The status of the task.
         Default is IN_PROGRESS.
         priority (TaskPriority, optional): Priority of the task.
         Default is MEDIUM.
-        categories (list[str], optional): Categories the task belongs to.
+        categories (str, optional): Categories the task belongs to.
         Default is None.
         """
+
         self.id = id
         self.name = name
         self.description = description
-        self.creation_date = datetime.now()
-
-        if categories is None:
-            categories = []
-
-        for category in categories:
-            if not isinstance(category, str):
-                raise ValueError("Invalid type of category")
+        self.creation_date = date.today()
 
         # Ensure that due_date is always in 'DD-MM-YYYY' format
         if isinstance(due_date, str):
             self._set_initial_due_date(parse_date(due_date))
-        elif isinstance(due_date, datetime):
+        elif isinstance(due_date, date):
             # Format the datetime object as 'DD-MM-YYYY' string
             self._set_initial_due_date(due_date)
         else:
@@ -137,7 +128,7 @@ class Task:
         self.assignee = assignee
         self.status = status
         self.priority = priority
-        self._categories = categories
+        self.categories = categories
 
     @property
     def id(self) -> int:
@@ -157,7 +148,7 @@ class Task:
 
     @name.setter
     def name(self, new_name: str) -> None:
-        if not new_name:
+        if not new_name or not isinstance(new_name, str) or new_name.isnumeric():
             raise ValueError("Name must be a non-empty string")
         self._name = new_name
 
@@ -168,12 +159,12 @@ class Task:
 
     @description.setter
     def description(self, new_description: str) -> None:
-        if not new_description:
+        if not new_description or not isinstance(new_description, str) or new_description.isnumeric():
             raise ValueError("Description must be a non-empty string")
         self._description = new_description
 
     def _set_initial_due_date(self, date: datetime) -> None:
-        if date <= datetime.now():
+        if date <= date.today():
             raise ValueError("Due date must be a future date")
         self._due_date = date
 
@@ -184,22 +175,20 @@ class Task:
 
     @due_date.setter
     def due_date(self, new_due_date: datetime) -> None:
-        if new_due_date <= datetime.now():
+        if new_due_date <= date.today():
             raise ValueError("Due date must be a future date")
         self._due_date = new_due_date
 
     @property
-    def assignee(self) -> list[str]:
+    def assignee(self) -> str:
         """Getter for the list of assignees for the task."""
         return self._assignee
 
     @assignee.setter
-    def assignee(self, new_assignee: list[str]) -> None:
-        if not new_assignee or not all(
-            isinstance(assignee, str) and assignee for assignee in new_assignee
-        ):
+    def assignee(self, new_assignee: str) -> None:
+        if not new_assignee or not isinstance(new_assignee, str) or new_assignee.isnumeric():
             raise ValueError(
-                "Assignee list must be a non-empty list of non-empty strings"
+                "Assignee list must be a non-empty string"
             )
         self._assignee = new_assignee
 
@@ -226,15 +215,12 @@ class Task:
         self._priority = new_priority
 
     @property
-    def categories(self) -> list[str]:
-        """Getter for the task's list of categories."""
-        return self._categories
+    def categories(self) -> str:
+        """Getter for the task's categories."""
+        return self.categories
 
     @categories.setter
-    def categories(self, new_categories: list[str]) -> None:
-        if not all(
-            isinstance(category, str) and category
-            for category in new_categories
-        ):
-            raise ValueError("Categories must be a list of non-empty strings")
+    def categories(self, new_categories: str) -> None:
+        if not new_categories or not isinstance(new_categories, str) or new_categories.isnumeric():
+            raise ValueError("Categories must be a non-empt string")
         self._categories = new_categories

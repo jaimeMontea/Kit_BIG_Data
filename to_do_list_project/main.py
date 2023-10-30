@@ -13,7 +13,7 @@ from typing import Callable, Tuple, Type, Union
 
 from tabulate import tabulate
 
-from .task import TaskPriority
+from .task import TaskPriority, TaskStatus, Task
 from .task_manager import TaskManager
 from .task_manager import TaskNotFoundError
 
@@ -47,7 +47,14 @@ logger = setup_logger(os.path.join(parent_dir, "logs", "user_input.log"))
 
 
 def validate_date(date_str: str) -> Tuple[bool, str]:
-    """Validate a date string and return a datetime object if valid."""
+    """
+    Validate a date string and return a datetime object if valid.
+    Args: 
+        date_str (str): Date to be validated.
+    Returns: 
+        Tuple[bool, str]: Tuple where the first value is a boolean representing if the test passed and 
+                          the second value representing the date validated.
+    """
     try:
         due_date = datetime.strptime(date_str, "%Y/%m/%d")
         if due_date.date() < datetime.now().date():
@@ -66,13 +73,42 @@ def validate_date(date_str: str) -> Tuple[bool, str]:
 def validate_priority(
     priority_str: str,
 ) -> Tuple[bool, Union[str, TaskPriority]]:
-    """Validate a priority."""
+    """
+    Validate a priority.
+    Args: 
+        priority_str (str): The priority of the task.
+
+    Returns: 
+        Tuple[bool, str]: Tuple where the first value is a boolean representing if the test passed and 
+                          the second value representing the priority validated.
+    """
     try:
-        return True, TaskPriority[priority_str.upper()]
+        if not priority_str:
+            return True, ""
+        return True, TaskPriority[priority_str.upper().strip()]
     except KeyError:
         logger.error("Invalid priority value. Should be: LOW, MEDIUM or HIGH.")
         return False, "Invalid priority value. Use LOW, MEDIUM, or HIGH."
 
+def validate_status(
+    status_str: str,
+) -> Tuple[bool, Union[str, TaskStatus]]:
+    """
+    Validate a Status.
+    Args: 
+        status_str (str): The status of the task.
+
+    Returns: 
+        Tuple[bool, str]: Tuple where the first value is a boolean representing if the test passed and 
+                          the second value representing the status validated.
+    """
+    try:
+        if not status_str:
+            return True, ""
+        return True, TaskStatus[status_str.upper().replace(" ", "").strip()]
+    except KeyError:
+        logger.error("Invalid status value. Should be: START, IN_PROGRESS or COMPLETE.")
+        return False, "Invalid status value. Use START, IN_PROGRESS, or COMPLETE."
 
 def get_input(
     prompt: str, validator_func: Callable[[str], Tuple[bool, Union[int, str]]]
@@ -96,9 +132,13 @@ def get_input(
             return value
         print(value)
 
-
 def add_task(task_manager: TaskManager) -> None:
-    """Add a task."""
+    """
+    Add a task.
+    
+    Args: 
+        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    """
     name = get_input(
         "Enter task name: ",
         lambda x: (bool(x), x if x else "Task name cannot be empty."),
@@ -108,39 +148,47 @@ def add_task(task_manager: TaskManager) -> None:
         lambda x: (bool(x), x if x else "Task description cannot be empty."),
     )
     due_date = get_input("Enter due date (YYYY/MM/DD): ", validate_date)
-    print("due_date", due_date)
     assignees = get_input(
-        "Enter assignees (comma separated): ",
+        "Enter assignee: ",
         lambda x: (
-            bool(x.split(",")),
-            x.split(",") if x else "No Assignee",
-        ),
+            bool(x),x if x else "No Assignee"),
     )
     priority = get_input(
         "Enter task priority (LOW, MEDIUM, HIGH): ", validate_priority
     )
     categories = get_input(
-        "Enter task categories (comma separated): ",
+        "Enter task category: ",
         lambda x: (
-            bool(x.split(",")),
-            x.split(",") if x else "No category",
+            bool(x),x if x else "No category",
         ),
     )
 
-    task_manager.add_task(
-        name,
-        description,
-        due_date,
-        assignees,
-        priority=priority,
-        categories=categories,
-    )
+    try:
+        Task(1, name, description, due_date, assignees, priority=priority, categories=categories) # Task instance created to capture any possible error.
 
-    print(f"Task '{name}' added successfully.")
+        task_manager.add_task(
+            name,
+            description,
+            due_date,
+            assignees,
+            priority=priority,
+            categories=categories,
+        )
+
+        print(f"Task '{name}' added successfully.")
+
+    except Exception as e:
+        print(e)
+        logger.error("Error when creating task: " + str(e))
 
 
 def remove_task(task_manager: TaskManager) -> None:
-    """Remove a task by its ID."""
+    """
+    Remove a task by its ID.
+    
+    Args: 
+        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    """
     try:
         task_id = int(input("Enter the task ID to remove: "))
     except ValueError:
@@ -157,7 +205,12 @@ def remove_task(task_manager: TaskManager) -> None:
 
 
 def complete_task(task_manager: TaskManager) -> None:
-    """Mark a task as completed by its ID."""
+    """
+    Mark a task as completed by its ID.
+    
+    Args: 
+        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    """
     try:
         task_id = int(input("Enter the task ID to mark as completed: "))
         task_manager.complete_task(task_id)
@@ -175,7 +228,12 @@ def complete_task(task_manager: TaskManager) -> None:
 
 
 def modify_task(task_manager) -> None:
-    """Modify a task by its ID."""
+    """
+    Modify a task by its ID.
+    
+    Args: 
+        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    """
     try:
         task_id = int(input("Enter the task ID to modify: "))
     except ValueError:
@@ -197,11 +255,18 @@ def modify_task(task_manager) -> None:
         "Enter new due_date (YYYY/MM/DD)[Press enter to not change]: "
     )
 
-    due_date = datetime.strptime(due_date, "%Y/%m/%d")
+    due_date = datetime.strptime(due_date, "%Y/%m/%d") if due_date else due_date
     assignee = input("Enter new assignee[Press enter to not change]: ")
-    task_manager.modify_task(task_id, name, description, due_date, assignee)
+    status = get_input("Enter task status (Start, In Progress, Complete) [Press enter to not change]: ", validate_status)
+    priority = get_input("Enter task priority (Low, Medium, High) [Press enter to not change]: ", validate_priority)
 
-    print("Task modified successfully.")
+    try: 
+        task_manager.modify_task(task_id, name, description, due_date, assignee, status, priority)
+        print("Task modified successfully.")
+    except Exception as e:
+        print(e)
+        logger.error("Error when creating task: " + str(e))
+
 
 
 def choice_validator(user_input: str) -> Tuple[bool, Union[str, int]]:
@@ -225,8 +290,13 @@ def choice_validator(user_input: str) -> Tuple[bool, Union[str, int]]:
         return False, "Please enter a valid integer."
 
 
-def display_all_tasks(task_manager) -> None:
-    """Display all tasks."""
+def display_all_tasks(task_manager: TaskManager) -> None:
+    """
+    Display all tasks.
+    
+    Args: 
+        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    """
     tasks = task_manager.get_all_tasks()
     if tasks:
         columns = (
@@ -250,7 +320,12 @@ def display_all_tasks(task_manager) -> None:
 
 
 def main(task_manager: TaskManager) -> None:
-    """Run the Task Manager app."""
+    """
+    Run the Task Manager app.
+    
+    Args: 
+        task_manager (TaskManager): A TaskManager instance which control all task actions. 
+    """
     while True:
         print("\n--- Task Manager ---")
         print("Choose an option:")
@@ -276,7 +351,6 @@ def main(task_manager: TaskManager) -> None:
         elif choice == 6:
             print("Exiting the Task Manager.")
             break
-
 
 if __name__ == "__main__":
     task_manager = TaskManager()
