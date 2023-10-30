@@ -9,7 +9,7 @@ priority, and categories.
 
 from datetime import datetime, date
 from enum import Enum, unique
-from typing import List, TypedDict, Union
+from typing import TypedDict, Union
 
 
 def parse_date(date_string: str) -> datetime:
