@@ -121,7 +121,7 @@ make html
 
 ### Security
 
-Only recognized packages are used into this project.
+Only official and recognized packages are used into this project.
 No environment variables are needed.
 
 ### Coding Standards
