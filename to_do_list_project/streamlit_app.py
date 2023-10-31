@@ -6,12 +6,12 @@ It drives the UI of the Task Manager application using the
 Streamlit framework.
 """
 
-from datetime import date
 import logging
 import os
 from typing import Type
 
 import pandas as pd
+from PIL import Image
 import streamlit as st
 
 from to_do_list_project.task import TaskData, TaskStatus, TaskPriority, Task
@@ -31,6 +31,18 @@ def main(task_manager: TaskManager) -> None:
     - Modify Task: Modify tasks using their ID.
     """
     st.title("Task Manager")
+    image = Image.open('')
+    st.image(image, caption='Task Manager Logo')
+
+    logger = logging.getLogger("streamlit_input")
+    if not logger.handlers:
+        logger.setLevel(logging.INFO)
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+        file_handler = logging.FileHandler("streamlit_input.log")
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
 
     # Navigation
     menu = [
@@ -63,17 +75,6 @@ def main(task_manager: TaskManager) -> None:
         task_categories = st.text_input("Categories")
 
         if st.button("Submit"):
-            new_task_data: TaskData = {
-                "name": task_name,
-                "description": task_description,
-                "creation_date": date.today(),
-                "due_date": task_due_date,
-                "assignee": task_assignee,
-                "status": TaskStatus(task_status),
-                "priority": TaskPriority(task_priority),
-                "categories": task_categories
-            }
-
             logger.info(f"User Input to Create Task")
             logger.info(f"(Create) name: {task_name}")
             logger.info(f"(Create) description: {task_description}")
@@ -85,8 +86,7 @@ def main(task_manager: TaskManager) -> None:
 
             try:
                 Task(1, task_name, task_description, task_due_date, task_assignee,
-                     TaskStatus(task_status), TaskPriority(task_priority), task_categories) # Task instance created to capture any possible error.
-                task_manager._db.insert_data("tasks", new_task_data)
+                     TaskStatus(task_status), TaskPriority(task_priority), task_categories)
                 st.success("Task created successfully!")
                 logger.info("Task created successfully.")
             except Exception as e:
@@ -107,9 +107,11 @@ def main(task_manager: TaskManager) -> None:
                 "Priority",
                 "Category",
             )
-            table =  pd.DataFrame(tasks, columns=columns)
-            table.replace({"Status": {i.value: i.name for i in TaskStatus}}, inplace=True)
-            table.replace({"Priority": {i.value: i.name for i in TaskPriority}}, inplace=True)
+            table = pd.DataFrame(tasks, columns=columns)
+            table.replace(
+                {"Status": {i.value: i.name for i in TaskStatus}}, inplace=True)
+            table.replace(
+                {"Priority": {i.value: i.name for i in TaskPriority}}, inplace=True)
             st.dataframe(table, hide_index=True)
         else:
             st.error("No tasks.")
@@ -150,15 +152,20 @@ def main(task_manager: TaskManager) -> None:
         ids = [task[0] for task in tasks]
         task_id = st.selectbox("Task ID to Modify", ids)
         name = st.text_input("New Name to Modify [Leave Blank to not Modify]")
-        description = st.text_input("New Description to Modify [Leave Blank to not Modify]")
-        
-        assignee = st.text_input("New Assignee to Modify [Leave Blank to not Modify]")
-        status = st.selectbox("New Status to Modify [Leave Blank to not Modify]", [""] + [status for status in TaskStatus])
-        priority = st.selectbox("New Priority to Modify [Leave Blank to not Modify]", [""] + [priority for priority in TaskPriority])
+        description = st.text_input(
+            "New Description to Modify [Leave Blank to not Modify]")
+
+        assignee = st.text_input(
+            "New Assignee to Modify [Leave Blank to not Modify]")
+        status = st.selectbox("New Status to Modify [Leave Blank to not Modify]", [
+                              ""] + [status for status in TaskStatus])
+        priority = st.selectbox("New Priority to Modify [Leave Blank to not Modify]", [
+                                ""] + [priority for priority in TaskPriority])
 
         to_change = st.checkbox('Modify Due Date')
         if to_change:
-            due_date = st.date_input("New Due Date to Modify [Leave Blank to not Modify]")
+            due_date = st.date_input(
+                "New Due Date to Modify [Leave Blank to not Modify]")
         else:
             due_date = ''
         if st.button("Modify"):
@@ -174,7 +181,8 @@ def main(task_manager: TaskManager) -> None:
             else:
                 logger.info(f"(Modify) due_date: no input")
             try:
-                task_manager.modify_task(task_id, name, description, due_date, assignee, status, priority)
+                task_manager.modify_task(
+                    task_id, name, description, due_date, assignee, status, priority)
                 st.success(f"Task {task_id} modified!")
                 logger.info(f"Task {task_id} modified!")
             except ValueError as e:
@@ -183,6 +191,7 @@ def main(task_manager: TaskManager) -> None:
             except Exception as e:
                 st.error(e)
                 logger.error("Error when modifying task: " + str(e))
+
 
 def setup_logger(log_file: str) -> Type[logging.Logger]:
     """
@@ -206,9 +215,11 @@ def setup_logger(log_file: str) -> Type[logging.Logger]:
 
     return logger
 
+
 if __name__ == "__main__":
     current_dir = os.path.dirname(__file__)
     parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
-    logger = setup_logger(os.path.join(parent_dir, "logs", "streamlit_user_input.log"))
+    logger = setup_logger(os.path.join(
+        parent_dir, "logs", "streamlit_user_input.log"))
     task_manager = TaskManager()
     main(task_manager)
