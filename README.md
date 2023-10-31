@@ -98,6 +98,7 @@ python -m streamlit run to_do_list_project/streamlit_app.py
 ### Download from PyPi
 
 pip install Kit-Big-Data-To-Do-List
+https://pypi.org/project/Kit-Big-Data-To-Do-List/
 
 ### Database
 
