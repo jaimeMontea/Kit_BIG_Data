@@ -30,9 +30,7 @@ def main(task_manager: TaskManager) -> None:
     - Delete Task: Remove tasks using their ID.
     - Modify Task: Modify tasks using their ID.
     """
-    st.title("Task Manager")
-    image = Image.open('')
-    st.image(image, caption='Task Manager Logo')
+    st.image(Image.open('assets/img/logo.png'))
 
     logger = logging.getLogger("streamlit_input")
     if not logger.handlers:
@@ -56,7 +54,7 @@ def main(task_manager: TaskManager) -> None:
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Home":
-        st.subheader("Welcome to Task Manager")
+        st.subheader("Welcome")
         st.write("Navigate using the sidebar to manage tasks.")
 
     elif choice == "Create Task":
