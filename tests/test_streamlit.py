@@ -41,7 +41,7 @@ def test_display_home(task_manager: TaskManager) -> None:
                 main(task_manager)
 
                 mock_subheader.assert_called_once_with(
-                    "Welcome to Task Manager"
+                    "Welcome"
                 )
                 mock_write.assert_called_once_with(
                     "Navigate using the sidebar to manage tasks."

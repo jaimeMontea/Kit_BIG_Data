@@ -1,22 +1,22 @@
 ![task_manager_logo](assets/img/logo.png)
 
-## Présentation du Projet
+## Project Overview
 
-Ce projet porte sur la réalisation d'un __Task Manager__ réalisée dans le cadre du mastère __Intelligence Artificielle__ de __Telecom Paris__. Le principal objectif de ce travail est d'offrir une application simple et intuitive pour gérer des tâches.
+This project focuses on the development of a __Task Manager__ created as part of the  __Artificial Intelligence__ master's program at  __Telecom Paris__. The main objective of this work is to provide a simple and intuitive application for managing tasks.
 
-## Configuration de l'environnement
+## Environment Setup
 
-### Pré-requis
+### Prerequisites
 
 - Python 3.11
 - (Optionnel) Poetry pour la gestion des dépendances
 
 
-### Mise en place avec Poetry
+### Setup with Poetry
 
-Si vous avez [Poetry](https://python-poetry.org/) installé :
+If you have [Poetry](https://python-poetry.org/) installed:
 
-1. **Clonez le dépôt**:
+1. **Clone the repository**:
 ```
    git clone [lien_du_dépôt]
 ```
@@ -24,21 +24,21 @@ Si vous avez [Poetry](https://python-poetry.org/) installé :
    cd Kit_BIG_Data
 ```
 
-2. **Installez les dépendances**:
+2. **Install dependencies**:
 ```
    poetry install
 ```
 
-3. **Activez l'environnement virtuel**:
+3. **Activate the virtual environment**:
 ```
    poetry shell
 ```
 
-### Mise en place sans Poetry
+### Setup wit Pip
 
-Si vous n'utilisez pas Poetry :
+If you are not using Poetry:
 
-1. **Clonez le dépôt**:
+1. **Clone the repository**:
 ```
    git clone [lien_du_dépôt]
 ```
@@ -46,67 +46,90 @@ Si vous n'utilisez pas Poetry :
    cd Kit_BIG_Data
 ```
 
-2. **Créez un environnement virtuel**:
+2. **Create a virtual environment**:
 ```
 python -m venv venv
 ```
 
-3. **Activez l'environnement virtuel**:
-- Sur Windows :
+3. **Activate the virtual environment**:
+- On Windows :
 ```
    .\venv\Scripts\activate
 ```
 
-- Sur MacOS/Linux:
+- On MacOS/Linux:
 ```
    source venv/bin/activate
 ```
 
-4. **Installez les dépendances**:
+4. **Install dependencies**:
 ```
 pip install -r requirements.txt
 ```
 
-### Lancement du projet
+### Command Line Interface (CLI)
 
-Après avoir configuré l'environnement :
+After setting up the environment:
 
-1. **Naviguez vers le dossier du projet (si ce n'est déjà fait)**:
+1. **Navigate to the root project folder (if not already done)**:
 ```
 cd Kit_BIG_Data
 ```
 
-2. **Lancez le projet**:
+2. **Launch the CLI**:
 ```
 python -m to_do_list_project.main
 ```
 
-### Documentation générée avec Sphinx :
+### Graphical Interface (Streamlit):
 
-1. **Depuis la racine du projet**:
+After setting up the environment:
+
+1. **Navigate to the root project folder (if not already done)**:
+```
+cd Kit_BIG_Data
+```
+
+2. **Launch the interface**:
+```
+python -m streamlit run to_do_list_project/streamlit_app.py
+```
+
+### Database
+
+SQlite database is used to handle data.
+We've chosen this tool in order to demonstrate potentialities with heavier SQL databases and at the same time to remain lightweight.
+
+### CI/CD
+
+GitHub Actions is used for the CI/CD process.
+Any push triggers the pipeline, which checks code coverage, linting, docstring and runs tests.
+
+### Documentation Generated with Sphinx:
+
+1. **From the root of the project**:
 ```
 cd docs
 ```
 
-2. **Générer la documentation**:
+2. **Generate the documentation**:
 ```
 make html
 ```
 
-3. Ouvrez le fichier **docs/_build/html/index.html** sur votre navigateur internet.
+3. Open the file **docs/_build/html/index.html** in your web browser.
 
-### Ouvrir l'interface graphique générée avec Streamlit :
+### Security
 
-1. **Depuis la racine de votre projet**:
-```
-python -m streamlit run to_do_list_project/streamlit_app.py
-```
-### Normes de codage
+Only recognized packages are used into this project.
+No environment variables are needed as we are using SQlite database.
 
-Nous suivons le guide de style [PEP8](https://peps.python.org/pep-0008/) pour assurer la clarté et la lisibilité du code.
+### Coding Standards
+
+We follow the [PEP8](https://peps.python.org/pep-0008/) style guide to ensure code clarity and readability.
 
 
-### Liens utiles
+### Useful Links
 
-- PEP8: [Guide de style pour le code Python](https://peps.python.org/pep-0008/)
-- Python: [Documentation 3.11](https://docs.python.org/3.11/)
+- PEP8: [The Style Guide for Python Code](https://peps.python.org/pep-0008/)
+- Python: [3.11 Documentation](https://docs.python.org/3.11/)

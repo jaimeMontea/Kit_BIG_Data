@@ -7,6 +7,7 @@ Streamlit framework.
 """
 
 from datetime import datetime
+from PIL import Image
 import streamlit as st
 
 from to_do_list_project.task import TaskData, TaskStatus, TaskPriority
@@ -24,7 +25,7 @@ def main(task_manager: TaskManager) -> None:
     - Complete Task: Mark tasks as complete.
     - Delete Task: Remove tasks using their ID.
     """
-    st.title("Task Manager")
+    st.image(Image.open('assets/img/logo.png'))
 
     # Navigation
     menu = [
@@ -37,7 +38,7 @@ def main(task_manager: TaskManager) -> None:
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Home":
-        st.subheader("Welcome to Task Manager")
+        st.subheader("Welcome")
         st.write("Navigate using the sidebar to manage tasks.")
 
     elif choice == "Create Task":
