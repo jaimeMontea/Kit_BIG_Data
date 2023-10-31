@@ -1,4 +1,4 @@
-![task_manager_logo](https://github.com/jaimeMontea/Kit_BIG_Data/assets/45881846/b91f92a6-266d-433c-a075-cdb86ebf13ba)
+![task_manager_logo](assets/img/logo.png)
 
 ## Présentation du Projet
 
