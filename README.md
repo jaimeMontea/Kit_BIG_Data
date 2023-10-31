@@ -34,7 +34,7 @@ If you have [Poetry](https://python-poetry.org/) installed:
    poetry shell
 ```
 
-### Setup without Poetry
+### Setup wit Pip
 
 If you are not using Poetry:
 
@@ -67,19 +67,43 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-### Launching the Project
+### Command Line Interface (CLI)
 
 After setting up the environment:
 
-1. **Navigate to the project folder (if not already done)**:
+1. **Navigate to the root project folder (if not already done)**:
 ```
 cd Kit_BIG_Data
 ```
 
-2. **Launch the project**:
+2. **Launch the CLI**:
 ```
 python -m to_do_list_project.main
 ```
+
+### Graphical Interface (Streamlit):
+
+After setting up the environment:
+
+1. **Navigate to the root project folder (if not already done)**:
+```
+cd Kit_BIG_Data
+```
+
+2. **Launch the interface**:
+```
+python -m streamlit run to_do_list_project/streamlit_app.py
+```
+
+### Database
+
+SQlite database is used to handle data.
+We've chosen this tool in order to demonstrate potentialities with heavier SQL databases and at the same time to remain lightweight.
+
+### CI/CD
+
+GitHub Actions is used for the CI/CD process.
+Any push triggers the pipeline, which checks code coverage, linting, docstring and runs tests.
 
 ### Documentation Generated with Sphinx:
 
@@ -95,12 +119,11 @@ make html
 
 3. Open the file **docs/_build/html/index.html** in your web browser.
 
-### Open the Graphical Interface Generated with Streamlit:
+### Security
 
-1. **From the root of your project**:
-```
-python -m streamlit run to_do_list_project/streamlit_app.py
-```
+Only recognized packages are used into this project.
+No environment variables are needed as we are using SQlite database.
+
 ### Coding Standards
 
 We follow the [PEP8](https://peps.python.org/pep-0008/) style guide to ensure code clarity and readability.
