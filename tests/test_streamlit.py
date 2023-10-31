@@ -5,11 +5,14 @@ This script is dedicated to test all the functionalities
 from test_streamlit.py file, our graphical interface.
 """
 
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 import sqlite3
 from unittest.mock import patch
 
 import pytest
+import pandas as pd
+import streamlit as st
+from typing import Any
 
 from to_do_list_project.db import SQLiteDB
 from to_do_list_project.streamlit_app import main
@@ -23,6 +26,39 @@ def task_manager() -> TaskManager:
     task_manager = TaskManager(SQLiteDB("file::memory:?cache=shared"))
     conn = sqlite3.connect("file::memory:?cache=shared", uri=True)
     yield task_manager
+    conn.close()
+
+
+@pytest.fixture
+def task_manager_with_tasks() -> [TaskManager, Any]:
+    """Fixture to create a new TaskManager instance with tasks."""
+    task_manager = TaskManager(SQLiteDB("file::memory:?cache=shared"))
+    conn = sqlite3.connect("file::memory:?cache=shared", uri=True)
+
+    curent_date = date.today() + timedelta(days=1)
+
+    task_manager.add_task(
+        "Test Task",
+        "Description",
+        curent_date,
+        "user@example.com",
+        TaskStatus.IN_PROGRESS,
+        TaskPriority.MEDIUM,
+        "Category1",
+    )
+
+    yield task_manager, [
+        (
+            1,
+            "Test Task",
+            "Description",
+            curent_date,
+            "user@example.com",
+            TaskStatus.IN_PROGRESS,
+            TaskPriority.MEDIUM,
+            "Category1",
+        )
+    ]
     conn.close()
 
 
@@ -152,7 +188,7 @@ def test_display_delete_task(task_manager: TaskManager) -> None:
                     mock_subheader.assert_called_once_with("Delete a Task")
 
 
-def test_display_view_tasks(task_manager: TaskManager) -> None:
+def test_display_view_tasks(task_manager_with_tasks: TaskManager) -> None:
     """
     Test the main interface of the Task Manager for the 'View Tasks' option.
     """
@@ -160,8 +196,9 @@ def test_display_view_tasks(task_manager: TaskManager) -> None:
         "to_do_list_project.streamlit_app.st.sidebar.selectbox",
         return_value="View Tasks",
     ):
-        with patch(
-            "to_do_list_project.streamlit_app.st.subheader"
-        ) as mock_subheader:
-            main(task_manager)
-            mock_subheader.assert_called_once_with("Existing Tasks")
+        with patch.object(st, 'dataframe') as mock_dataframe, patch.object(st, 'error') as mock_error:
+            mock_error.assert_not_called()
+            mock_dataframe.assert_called_once()
+            args, kwargs = mock_dataframe.call_args
+            assert 'hide_index' in kwargs and kwargs['hide_index'] is True
+            assert isinstance(args[0], pd.DataFrame)

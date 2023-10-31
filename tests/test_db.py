@@ -4,7 +4,7 @@ test_db.py
 This script is dedicated to test all the functionalities from db.py file.
 """
 
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 import sqlite3
 from unittest.mock import Mock, patch
 import pytest
@@ -61,12 +61,12 @@ def test_insert_data(db_manager: SQLiteDB):
     sample_task = {
         "name": "Test task",
         "description": "This is a test task.",
-        "creation_date": datetime.now(),
-        "due_date": datetime.now() + timedelta(days=1),
-        "assignee": ["John Doe"],
+        "creation_date": date.today(),
+        "due_date": date.today() + timedelta(days=1),
+        "assignee": "John Doe",
         "status": TaskStatus.IN_PROGRESS,
         "priority": TaskPriority.MEDIUM,
-        "categories": ["Work", "Important"],
+        "categories": "Work"
     }
 
     task_id = db_manager.insert_data(table_name, sample_task)
@@ -88,12 +88,12 @@ def test_remove_task(db_manager: SQLiteDB):
     sample_task = {
         "name": "Test task",
         "description": "This is a test task.",
-        "creation_date": datetime.now(),
-        "due_date": datetime.now() + timedelta(days=1),
-        "assignee": ["John Doe"],
+        "creation_date": date.today(),
+        "due_date": date.today() + timedelta(days=1),
+        "assignee": "John Doe",
         "status": TaskStatus.IN_PROGRESS,
         "priority": TaskPriority.MEDIUM,
-        "categories": ["Work", "Important"],
+        "categories": "Work"
     }
 
     task_id = db_manager.insert_data(table_name, sample_task)

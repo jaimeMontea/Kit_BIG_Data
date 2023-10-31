@@ -55,7 +55,7 @@ class TaskManager:
 
         Returns:
             List of Task instances.
-        
+
         """
         all_tasks = self._db.get_all_tasks()
         tasks = []
@@ -149,7 +149,7 @@ class TaskManager:
     def remove_task(self, task_id: int) -> None:
         """
         Remove task from database.
-        
+
         Args:
             task_id (int): Task id of the task.
         Raises:
@@ -177,7 +177,7 @@ class TaskManager:
     def get_all_tasks(self) -> List[tuple]:
         """
         Get all the tasks of database.
-        
+
         Returns:
             List of tuples. Each tuple represents the data of the task.
         """
@@ -186,7 +186,7 @@ class TaskManager:
     def get_task_by_id(self, task_id: int) -> Task:
         """
         List all the tasks of database.
-        
+
         Args:
             task_id (int): Task id of the task.
         Returns:

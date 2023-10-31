@@ -4,7 +4,7 @@ test_main.py
 This script is dedicated to test all the functionalities from main.py file.
 """
 
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 import logging
 import sqlite3
 from typing import Any, Tuple, Union
@@ -48,16 +48,16 @@ def task_manager_with_tasks() -> [TaskManager, Any]:
     task_manager = TaskManager(SQLiteDB("file::memory:?cache=shared"))
     conn = sqlite3.connect("file::memory:?cache=shared", uri=True)
 
-    curent_date = datetime.now() + timedelta(days=1)
+    curent_date = date.today() + timedelta(days=1)
 
     task_manager.add_task(
         "Test Task",
         "Description",
         curent_date,
-        ["user@example.com"],
+        "user@example.com",
         TaskStatus.IN_PROGRESS,
         TaskPriority.MEDIUM,
-        ["Category1"],
+        "Category1",
     )
 
     yield task_manager, [
@@ -66,10 +66,10 @@ def task_manager_with_tasks() -> [TaskManager, Any]:
             "Test Task",
             "Description",
             curent_date,
-            ["user@example.com"],
+            "user@example.com",
             TaskStatus.IN_PROGRESS,
             TaskPriority.MEDIUM,
-            ["Category1"],
+            "Category1",
         )
     ]
     conn.close()
@@ -107,15 +107,13 @@ def test_log_message_for_invalid_integer() -> None:
 def test_add_task(task_manager: TaskManager) -> None:
     """Test if inputs are taken into account when adding task."""
     mock_get_input_values = [
-        ("TaskName", "TaskName"),
-        ("TaskDesc", "TaskDesc"),
-        (
-            datetime.now() + timedelta(days=1),
-            datetime.now() + timedelta(days=1),
-        ),
-        ("John,Smith", ["John", "Smith"]),
-        (TaskPriority.HIGH, TaskPriority.HIGH),
-        ("Work,Project", ["Work", "Project"]),
+        ("Enter task name: ", ("TaskName", "TaskName")),
+        ("Enter task description: ", ("TaskDesc", "TaskDesc")),
+        ("Enter due date (YYYY/MM/DD): ", (date.today() + timedelta(days=1),
+         (date.today() + timedelta(days=1)).strftime("%Y/%m/%d"))),
+        ("Enter assignee: ", ("John,Smith", "John,Smith")),
+        ("Enter task priority (LOW, MEDIUM, HIGH): ", (TaskPriority.HIGH, "HIGH")),
+        ("Enter task category: ", ("Work, Project", "Work, Project")),
     ]
 
     mock_get_input = Mock(
@@ -123,22 +121,14 @@ def test_add_task(task_manager: TaskManager) -> None:
     )
 
     with patch("builtins.print") as mock_print, patch(
-        "to_do_list_project.main.get_input", mock_get_input
+        "to_do_list_project.main.get_input", new=mock_get_input
     ):
         add_task(task_manager)
 
-    mock_get_input.assert_has_calls(
-        [
-            call("Enter task name: ", ANY),
-            call("Enter task description: ", ANY),
-            call("Enter due date (YYYY/MM/DD): ", ANY),
-            call("Enter assignees (comma separated): ", ANY),
-            call("Enter task priority (LOW, MEDIUM, HIGH): ", ANY),
-            call("Enter task categories (comma separated): ", ANY),
-        ]
-    )
+    expected_calls = [call(val[0], ANY) for val in mock_get_input_values]
+    mock_get_input.assert_has_calls(expected_calls, any_order=False)
 
-    assert mock_print.call_count == 2
+    assert mock_print.call_count == 1
     mock_print.assert_any_call("Task 'TaskName' added successfully.")
 
 
@@ -221,7 +211,7 @@ def test_display_all_tasks_with_tasks(
             task[0],
             task[1],
             task[2],
-            (datetime.now()).strftime("%Y/%m/%d %H:%M:%S"),
+            (date.today()).strftime("%Y/%m/%d %H:%M:%S"),
             task[3].strftime("%Y/%m/%d %H:%M:%S"),
             task[4][0],
             task[5].value,
@@ -285,8 +275,7 @@ def test_modify_task_calls_modify_task() -> None:
         )
     ]
 
-    expected_datetime = datetime.combine(
-        (datetime.now() + timedelta(days=5)).date(), datetime.min.time())
+    expected_date = date.today() + timedelta(days=5)
 
     with patch(
         "builtins.input",
@@ -294,14 +283,14 @@ def test_modify_task_calls_modify_task() -> None:
             "1",
             "New Name",
             "New Description",
-            expected_datetime.strftime("%Y/%m/%d"),
+            expected_date.strftime("%Y/%m/%d"),
             "New Assignee",
         ],
     ):
         modify_task(mock_task_manager)
 
     mock_task_manager.modify_task.assert_called_once_with(
-        1, "New Name", "New Description", expected_datetime, "New Assignee"
+        1, "New Name", "New Description", expected_date, "New Assignee"
     )
 
 
@@ -345,10 +334,10 @@ def test_modify_task_id_not_found() -> None:
 
 def test_validate_date_valid_future_date() -> None:
     """Test that a valid future date string is correctly identified."""
-    future_date = (datetime.now() + timedelta(days=5)).strftime("%Y/%m/%d")
+    future_date = (date.today() + timedelta(days=5)).strftime("%Y/%m/%d")
     valid, response = validate_date(future_date)
     assert valid
-    assert response.date() == (datetime.now() + timedelta(days=5)).date()
+    assert response.date() == (date.today() + timedelta(days=5)).date()
 
 
 def test_validate_date_past_date() -> None:
@@ -356,7 +345,7 @@ def test_validate_date_past_date() -> None:
     Test that a past date string is correctly identified as invalid
     and returns an appropriate error message.
     """
-    past_date = (datetime.now() - timedelta(days=5)).strftime("%Y/%m/%d")
+    past_date = (date.today() - timedelta(days=5)).strftime("%Y/%m/%d")
     valid, response = validate_date(past_date)
 
     assert not valid
