@@ -182,7 +182,7 @@ def test_display_delete_task(task_manager: TaskManager) -> None:
         with patch(
             "to_do_list_project.streamlit_app.st.subheader"
         ) as mock_subheader:
-            with patch("to_do_list_project.streamlit_app.st.number_input"):
+            with patch("to_do_list_project.streamlit_app.st.selectbox"):
                 with patch("to_do_list_project.streamlit_app.st.button"):
                     main(task_manager)
                     mock_subheader.assert_called_once_with("Delete a Task")

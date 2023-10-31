@@ -32,16 +32,6 @@ def main(task_manager: TaskManager) -> None:
     """
     st.image(Image.open('assets/img/logo.png'))
 
-    logger = logging.getLogger("streamlit_input")
-    if not logger.handlers:
-        logger.setLevel(logging.INFO)
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
-        file_handler = logging.FileHandler("streamlit_input.log")
-        file_handler.setFormatter(formatter)
-        logger.addHandler(file_handler)
-
     # Navigation
     menu = [
         "Home",

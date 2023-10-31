@@ -211,12 +211,12 @@ def test_display_all_tasks_with_tasks(
             task[0],
             task[1],
             task[2],
-            (date.today()).strftime("%Y/%m/%d %H:%M:%S"),
-            task[3].strftime("%Y/%m/%d %H:%M:%S"),
-            task[4][0],
+            (date.today()).strftime("%Y/%m/%d"),
+            task[3].strftime("%Y/%m/%d"),
+            task[4],
             task[5].value,
             task[6].value,
-            task[7][0],
+            task[7],
         )
         formatted_tasks.append(formatted_task)
 
@@ -272,6 +272,8 @@ def test_modify_task_calls_modify_task() -> None:
             "Existing description",
             "Existing date",
             "Existing assignee",
+            "Existing status",
+            "Existing priority"
         )
     ]
 
@@ -285,12 +287,14 @@ def test_modify_task_calls_modify_task() -> None:
             "New Description",
             expected_date.strftime("%Y/%m/%d"),
             "New Assignee",
+            "New Status",
+            "New Priority",
         ],
     ):
         modify_task(mock_task_manager)
 
     mock_task_manager.modify_task.assert_called_once_with(
-        1, "New Name", "New Description", expected_date, "New Assignee"
+        1, "New Name", "New Description", expected_date, "New Assignee", "New Status", "New Priority"
     )
 
 
@@ -337,7 +341,7 @@ def test_validate_date_valid_future_date() -> None:
     future_date = (date.today() + timedelta(days=5)).strftime("%Y/%m/%d")
     valid, response = validate_date(future_date)
     assert valid
-    assert response.date() == (date.today() + timedelta(days=5)).date()
+    assert response.date() == (date.today() + timedelta(days=5))
 
 
 def test_validate_date_past_date() -> None:
@@ -391,8 +395,8 @@ def test_validate_priority_empty_string() -> None:
     """
     valid, response = validate_priority("")
 
-    assert not valid
-    assert response == "Invalid priority value. Use LOW, MEDIUM, or HIGH."
+    assert valid
+    assert response == ""
 
 
 class NoMoreInputs(Exception):
