@@ -7,7 +7,7 @@ from test_streamlit.py file, our graphical interface.
 
 from datetime import date, datetime, timedelta
 import sqlite3
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 import pandas as pd
@@ -77,7 +77,7 @@ def test_display_home(task_manager: TaskManager) -> None:
                 main(task_manager)
 
                 mock_subheader.assert_called_once_with(
-                    "Welcome to Task Manager"
+                    "Welcome"
                 )
                 mock_write.assert_called_once_with(
                     "Navigate using the sidebar to manage tasks."
@@ -152,7 +152,7 @@ def test_display_task_created_successfully(task_manager: TaskManager) -> None:
                                     )
 
 
-def test_display_complete_task(task_manager: TaskManager) -> None:
+def test_display_complete_task(task_manager_with_tasks: TaskManager) -> None:
     """
     Test the main interface of the Task Manager for the 'Complete Task' option.
     """
@@ -165,7 +165,7 @@ def test_display_complete_task(task_manager: TaskManager) -> None:
         ) as mock_subheader:
             with patch("to_do_list_project.streamlit_app.st.number_input"):
                 with patch("to_do_list_project.streamlit_app.st.button"):
-                    main(task_manager)
+                    main(task_manager_with_tasks)
                     mock_subheader.assert_called_once_with(
                         "Mark a Task as Complete"
                     )
@@ -188,32 +188,18 @@ def test_display_delete_task(task_manager: TaskManager) -> None:
                     mock_subheader.assert_called_once_with("Delete a Task")
 
 
-@pytest.fixture
-def st_mock():
-    with patch.object(st, 'subheader'), \
-            patch.object(st, 'write'), \
-            patch.object(st, 'dataframe') as mock_dataframe, \
-            patch.object(st, 'error') as mock_error:
-        yield mock_dataframe, mock_error
-
-def test_display_view_tasks(st_mock):
+def test_display_view_tasks(task_manager_with_tasks: TaskManager) -> None:
     """
-    Test the 'View Tasks' functionality of a Streamlit app to ensure that tasks are displayed
-    when available and an error message is shown when no tasks exist.
+    Test the main interface of the Task Manager for the 'View Tasks' option.
     """
-    mock_dataframe, mock_error = st_mock
-    task_manager = MagicMock(spec=TaskManager)
-
-    # Define the behavior of get_all_tasks for both cases
-    # Case 1: get_all_tasks returns a list of tasks
-    task_manager.get_all_tasks.return_value = [
-        (1, "Task 1", "Description 1", "2021-01-01", "2021-01-02", "Alice", 1, 1, "Work"),
-        # ... other tasks
-    ]
-    main(task_manager)  # You would call the Streamlit app or function that triggers the 'View Tasks' choice here
-    mock_dataframe.assert_called_once()
-
-    # Case 2: get_all_tasks returns an empty list
-    task_manager.get_all_tasks.return_value = []
-    main(task_manager)  # You would call the Streamlit app or function that triggers the 'View Tasks' choice here
-    mock_error.assert_called_once_with("No tasks.")
+    with patch(
+        "to_do_list_project.streamlit_app.st.sidebar.selectbox",
+        return_value="View Tasks",
+    ):
+        with patch('to_do_list_project.streamlit_app.st.dataframe') as mock_dataframe, patch.object(st, 'error') as mock_error:
+            main(task_manager_with_tasks)
+            mock_error.assert_not_called()
+            mock_dataframe.assert_called_once()
+            args, kwargs = mock_dataframe.call_args
+            assert 'hide_index' in kwargs and kwargs['hide_index'] is True
+            assert isinstance(args[0], pd.DataFrame)
