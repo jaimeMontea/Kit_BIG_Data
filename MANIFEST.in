@@ -1,0 +1,26 @@
+#Fichier spécifiant quels dossiers doivent etre inclus ou exclus sur PyPi 
+
+# Incluez tous les fichiers README, CHANGES/CHANGELOG, LICENSE, etc.
+include *.md *.rst *.txt
+
+# Inclure le dossier du code source
+recursive-include to_do_list *
+
+# Inclure les autres dossiers et fichiers
+include *.html
+include *.toml
+include *.py
+include *.db
+
+# Les dossiers contenant des ressources ou des documents peuvent être inclus
+recursive-include assets *
+recursive-include docs *
+
+# Exclure les dossiers et fichiers inutiles ou temporaires
+exclude .gitignore
+exclude poetry.lock
+prune .github
+prune pytest_cache
+prune build
+prune dist
+prune logs
