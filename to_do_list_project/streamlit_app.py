@@ -14,7 +14,7 @@ import pandas as pd
 from PIL import Image
 import streamlit as st
 
-from to_do_list_project.task import TaskData, TaskStatus, TaskPriority, Task
+from to_do_list_project.task import TaskStatus, TaskPriority, Task
 from to_do_list_project.task_manager import TaskManager
 
 
